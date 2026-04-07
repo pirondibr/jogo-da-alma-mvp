@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo da Alma — Sua Análise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-card: #111118;
+            --bg-card-hover: #16161f;
+            --border-subtle: rgba(255,255,255,0.06);
+            --text-primary: #e8e6e1;
+            --text-secondary: #9a9690;
+            --text-muted: #5c5955;
+            --accent-heart: #c2596a;
+            --accent-heart-soft: rgba(194,89,106,0.12);
+            --accent-throat: #5a8fba;
+            --accent-throat-soft: rgba(90,143,186,0.12);
+            --accent-solar: #c4a04e;
+            --accent-solar-soft: rgba(196,160,78,0.12);
+            --accent-crown: #b8a9d4;
+            --gradient-heart: linear-gradient(135deg, #c2596a 0%, #d4788a 100%);
+            --gradient-throat: linear-gradient(135deg, #5a8fba 0%, #7ab0d8 100%);
+            --gradient-solar: linear-gradient(135deg, #c4a04e 0%, #dab96a 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: var(--text-muted) transparent;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .grain-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        }
+
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 50% 50%, rgba(194,89,106,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 30% 70%, rgba(90,143,186,0.04) 0%, transparent 50%),
+                        radial-gradient(ellipse at 70% 30%, rgba(196,160,78,0.03) 0%, transparent 50%);
+            animation: slowPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes slowPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.05) rotate(2deg); opacity: 0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 680px;
+        }
+
+        .hero-label {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-title em {
+            font-style: italic;
+            color: var(--accent-heart);
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            max-width: 480px;
+            margin: 0 auto 3rem;
+            font-weight: 400;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            animation: fadeInUp 2s ease-out 1s both;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--text-muted), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .container {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 6rem 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 0.2em;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 400;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -0.01em;
+        }
+
+        .divider {
+            width: 40px;
+            height: 1px;
+            background: var(--text-muted);
+            margin: 3rem 0;
+        }
+
+        .diagnosis-text {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .diagnosis-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .pattern-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2.5rem;
+        }
+
+        .chakra-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chakra-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .chakra-tag.heart {
+            background: var(--accent-heart-soft);
+            color: var(--accent-heart);
+            border: 1px solid rgba(194,89,106,0.2);
+        }
+
+        .chakra-tag.throat {
+            background: var(--accent-throat-soft);
+            color: var(--accent-throat);
+            border: 1px solid rgba(90,143,186,0.2);
+        }
+
+        .chakra-tag.solar {
+            background: var(--accent-solar-soft);
+            color: var(--accent-solar);
+            border: 1px solid rgba(196,160,78,0.2);
+        }
+
+        .pattern-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .pattern-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .chakra-block {
+            margin-bottom: 3rem;
+        }
+
+        .chakra-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chakra-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .chakra-icon.heart { background: var(--accent-heart-soft); }
+        .chakra-icon.throat { background: var(--accent-throat-soft); }
+        .chakra-icon.solar { background: var(--accent-solar-soft); }
+
+        .chakra-block-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .dimension-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin: 1.5rem 0 0.75rem;
+            padding-left: 0.5rem;
+        }
+
+        .insight-list {
+            list-style: none;
+        }
+
+        .insight-list li {
+            position: relative;
+            padding: 1rem 1rem 1rem 1.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+
+        .insight-list li:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .insight-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .insight-list.heart li::before { background: var(--gradient-heart); }
+        .insight-list.throat li::before { background: var(--gradient-throat); }
+        .insight-list.solar li::before { background: var(--gradient-solar); }
+
+        .solution-text {
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.75;
+            transition: background 0.3s ease;
+        }
+
+        .solution-text:hover {
+            background: var(--bg-card-hover);
+        }
+
+        .solution-text strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .highlight-quote {
+            position: relative;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .highlight-quote.heart {
+            background: var(--accent-heart-soft);
+            border-left: 3px solid var(--accent-heart);
+        }
+
+        .highlight-quote.crown {
+            background: rgba(184,169,212,0.08);
+            border-left: 3px solid var(--accent-crown);
+        }
+
+        .capacity-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .capacity-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .capacity-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .capacity-name.heart { color: var(--accent-heart); }
+        .capacity-name.throat { color: var(--accent-throat); }
+        .capacity-name.solar { color: var(--accent-solar); }
+
+        .capacity-definition {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 0.75rem;
+        }
+
+        .capacity-connection {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        .mission-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .mission-table thead th {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            text-align: left;
+            padding: 0 1rem 0.5rem;
+            font-weight: 500;
+        }
+
+        .mission-table tbody tr {
+            background: var(--bg-card);
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .mission-table tbody tr:hover {
+            transform: translateX(4px);
+        }
+
+        .mission-table td {
+            padding: 1rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .mission-table td:first-child {
+            border-radius: 8px 0 0 8px;
+            width: 48px;
+            text-align: center;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-right: none;
+        }
+
+        .mission-table td:nth-child(2) {
+            border-left: none;
+            border-right: none;
+        }
+
+        .mission-table td:last-child {
+            border-radius: 0 8px 8px 0;
+            width: 80px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+            border-left: none;
+        }
+
+        .mission-complete {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .mission-complete-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-heart);
+            margin-bottom: 0.5rem;
+        }
+
+        .mission-complete-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .closing-section {
+            padding-bottom: 8rem;
+        }
+
+        .closing-text {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.85;
+            margin-bottom: 1.5rem;
+        }
+
+        .closing-final {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-style: italic;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-top: 3rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-subtle);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: var(--gradient-heart);
+            z-index: 1000;
+            transition: width 0.1s linear;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            opacity: 0.3;
+            cursor: pointer;
+            transition: opacity 0.3s ease, transform 0.3s ease, background 0.3s ease;
+        }
+
+        .nav-dot:hover {
+            opacity: 0.6;
+            transform: scale(1.3);
+        }
+
+        .nav-dot.active {
+            opacity: 1;
+            background: var(--accent-heart);
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0 1.25rem; }
+            section { padding: 4rem 0; }
+            .nav-dots { display: none; }
+            .hero-meta { flex-direction: column; gap: 0.5rem; }
+            .chakra-tags { gap: 0.5rem; }
+            .hero { min-height: 90vh; }
+        }
+
+        .fade-stagger > * {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .fade-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; }
+        .fade-stagger.visible > *:nth-child(2) { transition-delay: 0.1s; }
+        .fade-stagger.visible > *:nth-child(3) { transition-delay: 0.15s; }
+        .fade-stagger.visible > *:nth-child(4) { transition-delay: 0.2s; }
+        .fade-stagger.visible > *:nth-child(5) { transition-delay: 0.25s; }
+        .fade-stagger.visible > *:nth-child(6) { transition-delay: 0.3s; }
+        .fade-stagger.visible > *:nth-child(7) { transition-delay: 0.35s; }
+        .fade-stagger.visible > *:nth-child(8) { transition-delay: 0.4s; }
+        .fade-stagger.visible > *:nth-child(9) { transition-delay: 0.45s; }
+
+        .fade-stagger.visible > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="grain-overlay"></div>
+<div class="progress-bar" id="progressBar"></div>
+
+<nav class="nav-dots" id="navDots">
+    <div class="nav-dot active" data-section="0" title="Início"></div>
+    <div class="nav-dot" data-section="1" title="Diagnóstico"></div>
+    <div class="nav-dot" data-section="2" title="O que trava"></div>
+    <div class="nav-dot" data-section="3" title="O que fazer"></div>
+    <div class="nav-dot" data-section="4" title="Fortalecendo"></div>
+    <div class="nav-dot" data-section="5" title="Missão"></div>
+    <div class="nav-dot" data-section="6" title="Aprendendo"></div>
+</nav>
+
+<section class="hero visible" data-index="0">
+    <div class="hero-content">
+        <p class="hero-label">Jogo da Alma</p>
+        <h1 class="hero-title">Sua <em>Análise</em></h1>
+        <p class="hero-subtitle">Um mapa do que você está vivendo, do que está travando, e do que fazer a partir de agora.</p>
+        <div class="hero-meta">
+            <span>Ana</span>
+            <span>·</span>
+            <span>07 de abril de 2026</span>
+        </div>
+    </div>
+    <div class="scroll-indicator">
+        <span>Explorar</span>
+        <div class="scroll-line"></div>
+    </div>
+</section>
+
+<div class="container">
+
+    <!-- DIAGNÓSTICO -->
+    <section data-index="1">
+        <span class="section-number">01</span>
+        <h2 class="section-title">Seu Diagnóstico</h2>
+
+        <p class="diagnosis-text">
+            Sua mãe criticou sua filha por ser vegana dentro da sua casa, sem você por perto, dizendo que veganos são egoístas. Isso te deixou com raiva — e com razão. Um limite sério foi cruzado: alguém que você ama interferiu na educação da sua filha sem o seu consentimento, usando um argumento que é mais projeção do que verdade.
+        </p>
+        <p class="diagnosis-text">
+            Mas a raiva veio — e provavelmente ficou. Porque junto com ela veio a dúvida: <strong>"se eu confrontar minha mãe, vou criar mais dor nela."</strong> E enquanto essa dúvida existir, a conversa vai sendo adiada. O limite violado continua sem consequência, e o padrão se repete.
+        </p>
+
+        <div class="pattern-box">
+            <div class="chakra-tags">
+                <span class="chakra-tag heart">💚 Nos relacionamentos</span>
+                <span class="chakra-tag throat">🔵 Na comunicação</span>
+                <span class="chakra-tag solar">🟡 Nas decisões</span>
+            </div>
+            <p class="pattern-label">Padrão identificado</p>
+            <p class="pattern-text">Você prioriza a dor dos outros sobre a sua, especialmente com quem ama — e isso impede que você aja nas suas próprias lições.</p>
+        </div>
+    </section>
+
+    <!-- O QUE ESTÁ TRAVANDO -->
+    <section data-index="2">
+        <span class="section-number">02</span>
+        <h2 class="section-title">O que está travando</h2>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon heart">💚</div>
+                <h3 class="chakra-block-title">Nos relacionamentos</h3>
+            </div>
+
+            <p class="dimension-label">Por dentro</p>
+            <ul class="insight-list heart fade-stagger">
+                <li>A crença de que confrontar sua mãe é "criar dor nela" — quando na verdade a dor que ela pode sentir ao ouvir a verdade já faz parte do caminho dela, com ou sem você como intermediária.</li>
+                <li>Culpa por sentir raiva de alguém que você ama. Como se raiva e amor não pudessem coexistir. Podem. A raiva é o sinal de que algo que importa foi ferido.</li>
+                <li>A tendência de esperar o "momento certo" para a conversa — quando a mãe não estiver estressada, quando o clima estiver bom, quando tudo estiver alinhado. O momento perfeito não existe. E a espera está comunicando que o comportamento é aceitável.</li>
+            </ul>
+
+            <p class="dimension-label">Por fora</p>
+            <ul class="insight-list heart fade-stagger">
+                <li>O limite foi violado e não houve consequência. Sua mãe disse o que disse, e a vida seguiu como se nada tivesse acontecido. Para ela, a mensagem é: posso fazer isso.</li>
+                <li>Sua filha viveu uma situação onde os valores dela foram atacados por alguém da família, sem a mãe presente para protegê-la. Mesmo que ela não tenha verbalizado, isso deixa marca.</li>
+            </ul>
+        </div>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon throat">🔵</div>
+                <h3 class="chakra-block-title">Na comunicação</h3>
+            </div>
+
+            <p class="dimension-label">Por dentro</p>
+            <ul class="insight-list throat fade-stagger">
+                <li>Medo de que as palavras saiam erradas e piorem tudo. De que a conversa vire briga. De que o vínculo quebre.</li>
+                <li>A sensação de que você precisa convencer sua mãe de que ser vegana é certo. Você não precisa. O tema da conversa não é veganismo — é respeito.</li>
+            </ul>
+
+            <p class="dimension-label">Por fora</p>
+            <ul class="insight-list throat fade-stagger">
+                <li>A conversa necessária não aconteceu. Cada dia que passa sem ela, o silêncio se solidifica. E o silêncio está dizendo: "o que você fez está dentro do aceitável."</li>
+            </ul>
+        </div>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon solar">🟡</div>
+                <h3 class="chakra-block-title">Nas decisões</h3>
+            </div>
+
+            <p class="dimension-label">Por dentro</p>
+            <ul class="insight-list solar fade-stagger">
+                <li>Uma dúvida sutil sobre se você tem o "direito" de confrontar a própria mãe. Como se a hierarquia familiar ainda operasse como quando você era criança. Você não é mais filha pedindo permissão — você é mãe protegendo território.</li>
+            </ul>
+
+            <p class="dimension-label">Por fora</p>
+            <ul class="insight-list solar fade-stagger">
+                <li>Nenhuma ação concreta foi tomada para restabelecer o limite. A decisão está suspensa — e enquanto não for tomada, o desconforto interno cresce.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- O QUE FAZER -->
+    <section data-index="3">
+        <span class="section-number">03</span>
+        <h2 class="section-title">O que fazer</h2>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon heart">💚</div>
+                <h3 class="chakra-block-title">Nos relacionamentos</h3>
+            </div>
+
+            <p class="dimension-label">Por dentro</p>
+
+            <div class="highlight-quote crown">
+                "Você nunca cria uma lição para ninguém. Você só participa de lições que já existem."
+            </div>
+
+            <div class="solution-text">
+                A dor que sua mãe pode sentir ao ouvir que cruzou um limite não é dor que você está gerando — é dor que já faz parte do caminho dela. Se ela vai passar por essa lição de qualquer forma, <strong>seja a melhor intermediária possível</strong>. Transmita com amor, mas transmita.
+            </div>
+
+            <div class="solution-text">
+                Você não está escolhendo entre proteger sua mãe e proteger sua filha. Você está escolhendo entre <strong>agir com verdade</strong> ou deixar que o silêncio fale por você. O silêncio não protege ninguém — só adia.
+            </div>
+
+            <div class="solution-text">
+                Sentir raiva de alguém que você ama não é traição. É sinal de que algo que importa foi tocado. <strong>A raiva não é o problema. Engoli-la é.</strong>
+            </div>
+
+            <p class="dimension-label">Por fora</p>
+
+            <div class="solution-text">
+                Defina internamente qual é o limite exato que foi violado. Escreva em uma frase: <strong>"Quem educa minha filha somos nós, os pais. Opiniões sobre o estilo de vida dela são ditas com a gente presente, ou não são ditas."</strong>
+            </div>
+
+            <div class="solution-text">
+                Tenha a conversa com sua mãe. Não no meio de uma crise, mas também não espere o momento perfeito. <strong>Escolha um momento em que vocês possam se falar com calma e vá.</strong>
+            </div>
+        </div>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon throat">🔵</div>
+                <h3 class="chakra-block-title">Na comunicação</h3>
+            </div>
+
+            <p class="dimension-label">Por dentro</p>
+
+            <div class="solution-text">
+                A conversa não precisa ser perfeita. Precisa ser honesta. Você não precisa ter as palavras certas — precisa ter a <strong>intenção clara</strong>. A intenção é: comunicar um limite com amor.
+            </div>
+
+            <div class="solution-text">
+                Você não precisa convencer sua mãe de que veganismo é válido. <strong>O assunto não é veganismo. O assunto é:</strong> na minha casa, com a minha filha, sem eu estar presente, esse tipo de comentário não acontece.
+            </div>
+
+            <p class="dimension-label">Por fora</p>
+
+            <div class="solution-text">
+                Ensaie a conversa em voz alta antes. Não o script — <strong>o tom</strong>. O que você quer que ela sinta quando ouvir? Que foi confrontada com amor, não atacada.
+            </div>
+
+            <div class="highlight-quote heart">
+                "Mãe, preciso falar sobre algo que aconteceu com a Emma. O que foi dito sobre veganos na minha casa, sem eu por perto, feriu um limite meu. A educação dela é responsabilidade minha. Você pode discordar das escolhas dela, mas isso precisa ser dito comigo presente, não direto pra ela."
+            </div>
+        </div>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon solar">🟡</div>
+                <h3 class="chakra-block-title">Nas decisões</h3>
+            </div>
+
+            <p class="dimension-label">Por fora</p>
+
+            <div class="solution-text">
+                Escolha um dia e hora para a conversa. Anote. Marque como compromisso. <strong>Essa decisão é sua</strong> — não depende da agenda emocional da sua mãe.
+            </div>
+
+            <div class="solution-text">
+                Depois da conversa, independente da reação dela, reconheça internamente que você agiu. <strong>O resultado não é sua responsabilidade — a ação é.</strong>
+            </div>
+        </div>
+    </section>
+
+    <!-- O QUE VOCÊ ESTÁ FORTALECENDO -->
+    <section data-index="4">
+        <span class="section-number">04</span>
+        <h2 class="section-title">O que você está fortalecendo</h2>
+
+        <p class="diagnosis-text" style="margin-bottom: 2.5rem;">Cada passo dessa missão desenvolve capacidades que vão além dessa situação com sua mãe — são capacidades que mudam como você se posiciona na vida inteira.</p>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon heart">💚</div>
+                <h3 class="chakra-block-title">Nos relacionamentos</h3>
+            </div>
+
+            <div class="capacity-card">
+                <p class="capacity-name heart">Amor próprio</p>
+                <p class="capacity-definition">Nutrir a si mesma como nutre o outro.</p>
+                <p class="capacity-connection">Cada vez que você protege seus limites, está dizendo a si mesma que suas necessidades também importam. Não menos que as da sua mãe. Não menos que as de ninguém. Essa situação está te ensinando que cuidar de você não é egoísmo — é a base pra cuidar de verdade de qualquer outra pessoa.</p>
+            </div>
+
+            <div class="capacity-card">
+                <p class="capacity-name heart">Estabelecimento de limites amorosos</p>
+                <p class="capacity-definition">Proteger-se sem fechar o coração.</p>
+                <p class="capacity-connection">Dizer "isso não pode" para alguém que você ama é uma das formas mais maduras de amor que existe. Não é punição. É clareza. É dizer: "eu te amo, e justamente por isso não vou fingir que está tudo bem quando não está."</p>
+            </div>
+        </div>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon throat">🔵</div>
+                <h3 class="chakra-block-title">Na comunicação</h3>
+            </div>
+
+            <div class="capacity-card">
+                <p class="capacity-name throat">Coragem expressiva</p>
+                <p class="capacity-definition">Falar mesmo quando é difícil.</p>
+                <p class="capacity-connection">A conversa que você mais evita costuma ser a que mais liberta. Não porque vai ser fácil, mas porque do outro lado do medo de falar existe o alívio de não carregar mais o peso do silêncio.</p>
+            </div>
+        </div>
+
+        <div class="chakra-block">
+            <div class="chakra-header">
+                <div class="chakra-icon solar">🟡</div>
+                <h3 class="chakra-block-title">Nas decisões</h3>
+            </div>
+
+            <div class="capacity-card">
+                <p class="capacity-name solar">Assertividade</p>
+                <p class="capacity-definition">Comunicar posição com clareza e firmeza.</p>
+                <p class="capacity-connection">Não é ser dura. É ser clara. É ocupar o lugar de mãe que protege o espaço da filha, de filha que respeita a mãe mas não aceita invasão, e de mulher que age quando precisa agir.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MISSÃO DA SEMANA -->
+    <section data-index="5">
+        <span class="section-number">05</span>
+        <h2 class="section-title">Sua Missão da Semana</h2>
+
+        <table class="mission-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>O que fazer</th>
+                    <th>Tempo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Escreva num papel o limite exato que foi violado — em uma frase clara e curta</td>
+                    <td>5 min</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Ensaie em voz alta o que quer transmitir na conversa — não decore, sinta o tom</td>
+                    <td>15 min</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Escolha dia e hora para a conversa e anote no calendário como compromisso</td>
+                    <td>2 min</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Tenha a conversa com sua mãe — com firmeza e com amor</td>
+                    <td>30 min</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Depois da conversa, registre o que sentiu — sem julgar, só registre</td>
+                    <td>10 min</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="mission-complete">
+            <p class="mission-complete-label">Missão completa quando</p>
+            <p class="mission-complete-text">Você teve a conversa e comunicou seu limite, independente da reação dela.</p>
+        </div>
+    </section>
+
+    <!-- O QUE VOCÊ ESTÁ APRENDENDO -->
+    <section class="closing-section" data-index="6">
+        <span class="section-number">06</span>
+        <h2 class="section-title">O que você está aprendendo</h2>
+
+        <p class="closing-text">
+            Você está aprendendo que amar alguém não significa proteger essa pessoa de toda dor — inclusive a dor de ouvir que errou. Que cuidar do outro sem esquecer de si mesma não é egoísmo, é o que sustenta relações de verdade ao longo do tempo.
+        </p>
+
+        <p class="closing-text">
+            Que a educação da sua filha é uma área onde você tem não só o direito, mas o dever de se posicionar — e que fazer isso com amor não diminui a firmeza.
+        </p>
+
+        <p class="closing-text">
+            A conversa mais difícil com quem a gente ama costuma ser a que mais fortalece o vínculo, quando feita com verdade e com cuidado.
+        </p>
+
+        <p class="closing-final">
+            A raiva que você sentiu não é o problema. O problema seria engoli-la.
+        </p>
+    </section>
+
+</div>
+
+<script>
+    const sections = document.querySelectorAll('section');
+    const navDots = document.querySelectorAll('.nav-dot');
+    const progressBar = document.getElementById('progressBar');
+    const fadeStaggerElements = document.querySelectorAll('.fade-stagger');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+
+    sections.forEach(section => observer.observe(section));
+    fadeStaggerElements.forEach(el => observer.observe(el));
+
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / docHeight) * 100;
+        progressBar.style.width = progress + '%';
+
+        let currentSection = 0;
+        sections.forEach((section, index) => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= window.innerHeight / 2) {
+                currentSection = index;
+            }
+        });
+
+        navDots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentSection);
+        });
+    });
+
+    navDots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const index = parseInt(dot.dataset.section);
+            sections[index].scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+
+</body>
+</html>
