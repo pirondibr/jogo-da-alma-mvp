@@ -210,7 +210,7 @@ const LOADING_MESSAGES = [
 class JogoDaAlma {
     constructor() {
         this.apiKey = localStorage.getItem('jda_api_key') || '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';
-        this.model = localStorage.getItem('jda_model') || 'anthropic/claude-opus-4';
+        this.model = localStorage.getItem('jda_model') || 'anthropic/claude-sonnet-4.6';
         this.reportMarkdown = '';
         this.isGenerating = false;
         this.init();
