@@ -209,7 +209,7 @@ const LOADING_MESSAGES = [
 
 class JogoDaAlma {
     constructor() {
-        this.apiKey = localStorage.getItem('jda_api_key') || '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';
+        this.apiKey = localStorage.getItem('jda_api_key') || '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';
         this.model = localStorage.getItem('jda_model') || 'anthropic/claude-sonnet-4.6';
         this.reportMarkdown = '';
         this.isGenerating = false;
