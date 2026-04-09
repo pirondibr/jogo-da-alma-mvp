@@ -521,6 +521,7 @@ class JogoDaAlma {
         }
 
         this.addUserMessage(situation);
+        this.lastSituation = situation;
         this.userInput.value = '';
         this.charCount.textContent = '';
         this.isGenerating = true;
@@ -615,6 +616,8 @@ class JogoDaAlma {
             loadingEl.style.display = 'none';
             contentEl.style.display = 'block';
 
+            const casoBoxHtml = `<div class="ai-caso-box"><div class="caso-label">Seu caso</div><div class="caso-text">"${this.escapeHtml(situation)}"</div></div>`;
+
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
@@ -639,7 +642,7 @@ class JogoDaAlma {
                         const delta = parsed.choices?.[0]?.delta?.content;
                         if (delta) {
                             fullText += delta;
-                            contentEl.innerHTML = this.renderMarkdown(fullText);
+                            contentEl.innerHTML = casoBoxHtml + this.renderMarkdown(fullText);
                             this.scrollChat();
                         }
                     } catch (_) { /* skip malformed chunks */ }
@@ -691,6 +694,7 @@ class JogoDaAlma {
             </div>`;
         this.downloadArea.style.display = 'none';
         this.reportMarkdown = '';
+        this.lastSituation = '';
     }
 
     downloadMarkdown() {
@@ -708,35 +712,43 @@ class JogoDaAlma {
 
     generateReportHTML(markdown) {
         const rendered = this.renderMarkdown(markdown);
+        const situationHtml = this.lastSituation ? this.escapeHtml(this.lastSituation) : '';
+        const casoSection = situationHtml ? `<div class="caso-box"><div class="caso-label">Seu caso</div><p>"${situationHtml}"</p></div>` : '';
         return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Jogo da Alma — Sua Análise</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0a0a0f;--card:#111118;--border:rgba(255,255,255,0.06);--text:#e8e6e1;--text2:#9a9690;--muted:#5c5955;--heart:#c2596a;--throat:#5a8fba;--solar:#c4a04e}
+:root{--bg:#FAFBFC;--card:#FFFFFF;--text:#1F2937;--text2:#374151;--text-sec:#6B7280;--text-muted:#9CA3AF;--border:#E5E7EB;--border-light:#F3F4F6}
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;padding:3rem 1.5rem;max-width:760px;margin:0 auto}
-h1{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:400;margin-bottom:0.5rem;letter-spacing:-0.02em}
-h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;margin:3rem 0 1.5rem;padding-top:2rem;border-top:1px solid var(--border)}
-h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin:2rem 0 1rem;color:var(--text)}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.8;padding:3rem 1.5rem;max-width:720px;margin:0 auto}
+h1{font-family:'DM Sans',sans-serif;font-size:2rem;font-weight:700;margin-bottom:0.5rem;color:var(--text)}
+h2{font-family:'DM Sans',sans-serif;font-size:1.5rem;font-weight:700;margin:3rem 0 1.5rem;padding-top:2rem;border-top:2px solid var(--border-light);color:var(--text)}
+h3{font-family:'DM Sans',sans-serif;font-size:1.2rem;font-weight:700;margin:2rem 0 1rem;color:var(--text)}
+h4{font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:700;margin:1.25rem 0 0.5rem;color:var(--text)}
 p{color:var(--text2);margin-bottom:1rem;font-size:1rem}
 strong{color:var(--text);font-weight:600}
-em{font-style:italic}
+em{font-style:italic;color:var(--text2)}
 ul{list-style:none;padding:0;margin:0 0 1.5rem}
-li{position:relative;padding:0.9rem 1rem 0.9rem 1.5rem;margin-bottom:0.5rem;background:var(--card);border:1px solid var(--border);border-radius:8px;color:var(--text2);font-size:0.95rem;line-height:1.65;border-left:3px solid var(--heart)}
-hr{border:none;height:1px;background:var(--border);margin:2.5rem 0}
-table{width:100%;border-collapse:separate;border-spacing:0 0.5rem;margin:1.5rem 0}
-th{font-size:0.7rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);text-align:left;padding:0 1rem 0.5rem;font-weight:500}
-td{padding:1rem;font-size:0.95rem;color:var(--text2);background:var(--card);border:1px solid var(--border)}
-td:first-child{border-radius:8px 0 0 8px;width:48px;text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--muted)}
-td:last-child{border-radius:0 8px 8px 0;width:80px;text-align:center;font-size:0.85rem;color:var(--muted);white-space:nowrap}
-.footer{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--border);text-align:center;color:var(--muted);font-size:0.8rem}
+li{padding:0.9rem 1rem 0.9rem 1.5rem;margin-bottom:0.5rem;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:0.95rem;line-height:1.65;border-left:3px solid #10B981}
+hr{border:none;height:2px;background:var(--border-light);margin:2.5rem 0}
+blockquote{background:var(--border-light);border-left:3px solid var(--text-muted);padding:14px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:0.95rem;color:var(--text)}
+table{width:100%;border-collapse:separate;border-spacing:0;margin:1.5rem 0;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+th{background:var(--border-light);padding:10px 14px;text-align:left;font-weight:700;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.04em;color:var(--text-sec);border-bottom:1px solid var(--border)}
+td{padding:10px 14px;font-size:0.95rem;color:var(--text2);background:var(--card);border-bottom:1px solid var(--border-light);vertical-align:top}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.caso-box{background:#1F2937;color:#F9FAFB;border-radius:16px;padding:24px 28px;margin-bottom:40px}
+.caso-box .caso-label{font-size:11px;font-weight:700;color:#9CA3AF;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
+.caso-box p{font-size:15px;line-height:1.7;color:#E5E7EB;font-style:italic}
+.footer{margin-top:4rem;padding-top:2rem;border-top:2px solid var(--border-light);text-align:center;color:var(--text-muted);font-size:0.8rem}
 </style>
 </head>
 <body>
+${casoSection}
 ${rendered}
 <div class="footer">Gerado pelo Jogo da Alma · ${new Date().toLocaleDateString('pt-BR')}</div>
 </body>

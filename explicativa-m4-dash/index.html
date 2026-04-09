@@ -499,44 +499,81 @@
 
         .ai-content {
             display: none;
-            padding: 2rem;
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            padding: 2.5rem;
+            background: #FAFBFC;
+            border: 1px solid #E5E7EB;
+            border-radius: 16px;
             line-height: 1.8;
+            color: #1F2937;
+        }
+
+        .ai-caso-box {
+            background: #1F2937;
+            color: #F9FAFB;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 32px;
+        }
+
+        .ai-caso-box .caso-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #9CA3AF;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+
+        .ai-caso-box .caso-text {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #E5E7EB;
+            font-style: italic;
         }
 
         .ai-content h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-            font-weight: 400;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
             letter-spacing: -0.02em;
+            color: #1F2937;
         }
 
         .ai-content h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            font-weight: 400;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
             margin: 2.5rem 0 1rem;
             padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
+            border-top: 2px solid #F3F4F6;
+            color: #1F2937;
         }
 
         .ai-content h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
             margin: 1.5rem 0 0.75rem;
+            color: #1F2937;
+        }
+
+        .ai-content h4 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 1.25rem 0 0.5rem;
+            color: #1F2937;
         }
 
         .ai-content p {
-            color: var(--text2);
+            color: #374151;
             margin-bottom: 0.75rem;
             font-size: 0.95rem;
         }
 
-        .ai-content strong { color: var(--text); font-weight: 600; }
+        .ai-content strong { color: #1F2937; font-weight: 600; }
+        .ai-content em { color: #374151; }
 
         .ai-content ul, .ai-content ol {
             padding: 0;
@@ -548,75 +585,83 @@
             position: relative;
             padding: 0.75rem 1rem 0.75rem 1.25rem;
             margin-bottom: 0.4rem;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            border-left: 3px solid var(--heart);
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            border-left: 3px solid #10B981;
             font-size: 0.92rem;
-            color: var(--text2);
+            color: #374151;
             line-height: 1.65;
         }
 
         .ai-content hr {
             border: none;
-            height: 1px;
-            background: var(--border);
+            height: 2px;
+            background: #F3F4F6;
             margin: 2rem 0;
+        }
+
+        .ai-content blockquote {
+            background: #F3F4F6;
+            border-left: 3px solid #9CA3AF;
+            padding: 14px 18px;
+            border-radius: 0 10px 10px 0;
+            margin: 16px 0;
+            font-size: 0.92rem;
+            color: #1F2937;
         }
 
         .ai-content table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0 0.4rem;
+            border-spacing: 0;
             margin: 1rem 0 1.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
         }
 
         .ai-content th {
-            font-size: 0.7rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--text3);
+            background: #F3F4F6;
+            padding: 10px 14px;
             text-align: left;
-            padding: 0 0.75rem 0.4rem;
-            font-weight: 500;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #6B7280;
+            border-bottom: 1px solid #E5E7EB;
         }
 
         .ai-content td {
-            padding: 0.75rem;
+            padding: 10px 14px;
             font-size: 0.9rem;
-            color: var(--text2);
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
+            color: #374151;
+            background: #FFFFFF;
+            border-bottom: 1px solid #F3F4F6;
+            vertical-align: top;
         }
 
         .ai-content td:first-child {
-            border-radius: 8px 0 0 8px;
-            width: 40px;
-            text-align: center;
-            font-weight: 700;
-            color: var(--text3);
+            font-weight: 600;
+            color: #1F2937;
         }
 
-        .ai-content td:last-child {
-            border-radius: 0 8px 8px 0;
-            width: 75px;
-            text-align: center;
-            font-size: 0.8rem;
-            color: var(--text3);
-            white-space: nowrap;
+        .ai-content tr:last-child td {
+            border-bottom: none;
         }
 
         .error-msg {
             padding: 1.5rem;
-            background: rgba(194,89,106,0.08);
-            border: 1px solid rgba(194,89,106,0.2);
-            border-radius: 8px;
-            color: var(--text2);
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 10px;
+            color: #991B1B;
             font-size: 0.9rem;
             line-height: 1.6;
         }
 
-        .error-msg strong { color: var(--heart); }
+        .error-msg strong { color: #DC2626; }
 
         /* ── INPUT BAR ── */
         .chat-input {
