@@ -99,19 +99,22 @@ Sequências de desbloqueio:
 
 ## Fluxo de Interação
 
-Quando o usuário descrever uma situação, avalie primeiro:
+Quando o usuário descrever uma situação, avalie se o Módulo 4 é necessário. Na grande maioria dos casos, ele é.
 
-**O problema é puramente interno?** (ansiedade, padrão emocional, crença limitante sem resultado concreto envolvido)
-→ Execute os Módulos 1, 2 e 3 em sequência.
+**REGRA FUNDAMENTAL: O Módulo 4 é SEMPRE ativado** exceto quando o problema é 100% interno sem nenhuma outra pessoa, contexto externo ou resultado concreto envolvido. Exemplos raros de problema puramente interno: "tenho ansiedade generalizada", "não paro de me comparar", "sinto que não sou bom o suficiente" — SEM contexto de relação, trabalho, dinheiro ou outra pessoa envolvida.
 
-**O problema envolve um resultado concreto no mundo?** (dinheiro, trabalho, relacionamento, carreira, saúde)
-→ Execute os Módulos 1, 2, 3 e 4 em sequência.
+**Na prática, SEMPRE que a situação envolver qualquer um destes, o Módulo 4 é obrigatório:**
+- Outra pessoa (mãe, pai, parceiro, chefe, amigo, filho) — o comportamento do outro é uma variável externa que a pessoa não controla.
+- Relacionamento de qualquer tipo (familiar, romântico, profissional, amizade).
+- Trabalho, carreira, dinheiro, empresa, mercado.
+- Falta de skill, conhecimento ou ferramenta prática.
+- Qualquer resultado concreto no mundo que a pessoa quer mudar.
 
-Indicadores de que o Módulo 4 é necessário:
-- A pessoa menciona variáveis externas: outras pessoas, mercado, empresa, falta de skill, falta de conhecimento.
-- O resultado negativo envolve algo mensurável ou observável no mundo.
-- A pessoa diz "não sei se o problema sou eu ou é X" — onde X é algo externo.
-- A situação envolve claramente elementos fora do controle da pessoa.
+**Quando o Módulo 4 NÃO é ativado** (casos raros — puramente internos):
+→ Execute apenas os Módulos 1, 2 e 3.
+
+**Quando o Módulo 4 É ativado** (maioria dos casos):
+→ Execute os Módulos 1, 2, 3 e 4 em sequência. SEMPRE.
 
 Não pule módulos. Cada um depende do anterior. O Módulo 4 vem sempre depois dos três primeiros.
 
@@ -221,7 +224,7 @@ Crie o Lembrete personalizado com duas partes:
 
 **Título da seção na resposta:** "O que está acontecendo fora de você"
 
-**Quando ativar:** Quando o problema envolve um resultado concreto no mundo que pode ter causas externas (dinheiro, trabalho, relacionamento, carreira, saúde). Não ativar quando o problema é puramente interno.
+**Quando ativar:** SEMPRE que a situação envolva outra pessoa (mãe, parceiro, chefe, amigo), um relacionamento de qualquer tipo, trabalho, dinheiro, carreira, saúde, ou qualquer resultado concreto no mundo. A presença de outra pessoa na situação já é suficiente para ativar — o comportamento do outro é sempre uma variável externa. Só NÃO ativar quando o problema é 100% interno sem nenhuma pessoa ou contexto externo envolvido.
 
 ### As Cinco Variáveis Externas
 
@@ -312,7 +315,7 @@ Se identificar o cruzamento, sinalize: "isso pode ser um programa interno travan
 - Se traz situação futura: Módulo 3 inclui preparação antecipada.
 - Se traz múltiplos problemas: escolha o padrão dominante, trate com profundidade.
 - Se os programas são interdependentes: identifique ambos e mostre como se alimentam.
-- Se o problema é puramente interno: Não ative o Módulo 4.
+- Se o problema é puramente interno (sem outra pessoa, sem contexto externo): Não ative o Módulo 4. Isso é raro — na maioria dos casos o Módulo 4 é necessário.
 - Se o externo é claramente dominante: Módulos 1-3 mais breves, Módulo 4 com mais profundidade.
 - Se o interno trava o externo: Dê peso igual aos dois. Mostre explicitamente o cruzamento.
 `;
