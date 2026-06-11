@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo da Alma — Anna</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════
+   GLOBAL / SHARED
+   ══════════════════════════════════════════════════════ */
+:root {
+    --bg: #F7F6F3;
+    --card: #FFFFFF;
+    --text: #1A1A1A;
+    --text2: #3D3D3D;
+    --text3: #6B6B6B;
+    --text-muted: #9A9A9A;
+    --border: #E8E6E1;
+    --border-light: #F0EFEB;
+    --accent: #C9A84C;
+    --accent-soft: rgba(201,168,76,0.08);
+    --accent-border: rgba(201,168,76,0.25);
+    --red-bg: #FEF2F2;
+    --red-border: #FECACA;
+    --red-text: #991B1B;
+    --red-muted: #B45309;
+    --green-bg: #F0FDF4;
+    --green-border: #BBF7D0;
+    --green-text: #065F46;
+    --green-muted: #047857;
+    --amber-bg: #FFFBEB;
+    --amber-border: #FDE68A;
+    --amber-text: #92400E;
+    --purple-bg: #FAF5FF;
+    --purple-border: #E9D5FF;
+    --purple-text: #6B21A8;
+    --accent-laringeo: #3B82F6;
+    --accent-cardiaco: #10B981;
+    --accent-plexo: #F59E0B;
+    --accent-frontal: #8B5CF6;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── TAB BAR ── */
+.tab-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(247,246,243,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+}
+.tab-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 14px 24px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+}
+.tab-btn:hover { color: var(--text3); }
+.tab-btn.active { color: var(--text); }
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 2px;
+    background: var(--accent);
+    border-radius: 2px 2px 0 0;
+}
+.tab-btn .tab-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    vertical-align: middle;
+}
+.tab-badge-leve { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+.tab-badge-completo { background: var(--purple-bg); color: var(--purple-text); border: 1px solid var(--purple-border); }
+.tab-badge-lembrete { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+.tab-badge-acoes { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+
+/* ══════════════════════════════════════════════════════
+   VIEW 4: AÇÕES
+   ══════════════════════════════════════════════════════ */
+.acoes-page { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+.acoes-header { text-align: center; margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+.acoes-header-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.acoes-header h1 { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.acoes-header-sub { font-size: 13px; color: var(--text-muted); max-width: 440px; margin: 0 auto; }
+
+.acao-principal { background: var(--text); color: #F5F5F0; border-radius: 20px; padding: 28px; margin-bottom: 10px; animation: fadeUp 0.5s ease 0.05s both; }
+.acao-principal-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+.acao-principal-titulo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: #F5F5F0; line-height: 1.3; margin-bottom: 10px; }
+.acao-principal-porque { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+.acao-principal-porque strong { color: rgba(255,255,255,0.9); }
+
+.ferramenta-amostra { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 32px; overflow: hidden; animation: fadeUp 0.5s ease 0.08s both; }
+.ferramenta-amostra-header { padding: 14px 20px; background: var(--border-light); display: flex; align-items: center; gap: 10px; }
+.ferramenta-amostra-badge { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 6px; background: var(--purple-bg); color: var(--purple-text); border: 1px solid var(--purple-border); }
+.ferramenta-amostra-nome { font-size: 13px; font-weight: 700; color: var(--text); }
+.ferramenta-amostra-body { padding: 18px 20px; }
+.ferramenta-amostra-script { font-size: 14px; color: var(--text2); line-height: 1.65; font-style: italic; background: var(--accent-soft); border-radius: 10px; padding: 16px 18px; border-left: 3px solid var(--accent); }
+.ferramenta-amostra-script strong { color: var(--text); font-style: normal; }
+.ferramenta-amostra-nota { font-size: 12px; color: var(--text-muted); margin-top: 12px; line-height: 1.5; display: flex; align-items: flex-start; gap: 6px; }
+.ferramenta-amostra-nota-icon { flex-shrink: 0; margin-top: 1px; }
+
+.timing-section { margin-bottom: 28px; }
+.timing-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.timing-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 12px; border-radius: 8px; }
+.timing-agora { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+.timing-semana { background: var(--amber-bg); color: var(--amber-text); border: 1px solid var(--amber-border); }
+.timing-continuo { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+.timing-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text); }
+
+.acao-list { display: flex; flex-direction: column; gap: 10px; }
+.acao-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 22px; transition: border-color 0.2s; }
+.acao-card:hover { border-color: var(--accent-border); }
+.acao-card-top { display: flex; gap: 14px; align-items: flex-start; }
+.acao-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px; }
+.acao-content { flex: 1; }
+.acao-titulo { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.acao-desc { font-size: 13px; color: var(--text3); line-height: 1.55; margin-bottom: 8px; }
+.acao-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.acao-tag { font-size: 9px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; }
+.acao-tag-chakra { background: var(--border-light); color: var(--text-muted); }
+.acao-tag-tipo-prescritivo { background: var(--green-bg); color: var(--green-text); }
+.acao-tag-tipo-capacidade { background: var(--purple-bg); color: var(--purple-text); }
+.acao-ferramenta-hint { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); display: flex; align-items: flex-start; gap: 8px; }
+.acao-ferramenta-hint-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.acao-ferramenta-hint-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.acao-ferramenta-hint-text strong { color: var(--text3); }
+
+.travar-box { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: 16px; padding: 20px 22px; margin-bottom: 28px; }
+.travar-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber-text); margin-bottom: 10px; }
+.travar-item { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
+.travar-item:last-child { margin-bottom: 0; }
+.travar-sinal { font-size: 13px; font-weight: 700; color: var(--amber-text); flex-shrink: 0; margin-top: 1px; }
+.travar-text { font-size: 13px; color: var(--text2); line-height: 1.55; }
+
+.resultado-box { background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 16px; padding: 22px; }
+.resultado-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--green-text); margin-bottom: 12px; }
+.resultado-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .resultado-grid { grid-template-columns: 1fr; } }
+.resultado-item { display: flex; gap: 8px; align-items: flex-start; }
+.resultado-check { color: var(--green-muted); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.resultado-text { font-size: 13px; color: var(--green-text); line-height: 1.5; }
+
+.tab-view { display: none; }
+.tab-view.active { display: block; }
+
+/* ══════════════════════════════════════════════════════
+   VIEW 1: MAPA DA SITUAÇÃO (LEVE)
+   ══════════════════════════════════════════════════════ */
+.page { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+
+.m-header { text-align: center; margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+.m-header-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.m-header h1 { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.m-header-sub { font-size: 13px; color: var(--text-muted); }
+
+.situacao { background: var(--text); color: #F5F5F0; border-radius: 16px; padding: 22px 26px; margin-bottom: 28px; animation: fadeUp 0.5s ease 0.05s both; }
+.situacao-label { font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+.situacao-text { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.82); font-style: italic; }
+
+.section { margin-bottom: 24px; }
+.section-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.section-icon { width: 32px; height: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; }
+.section-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text); }
+
+/* Necessidades Raiz */
+.nec-raiz-icon { background: #FFF7ED; border: 1px solid #FDBA74; }
+.raiz-strip { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.raiz-item { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--border-light); transition: background 0.2s; }
+.raiz-item:last-child { border-bottom: none; }
+.raiz-item:hover { background: var(--border-light); }
+.raiz-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; position: relative; }
+.raiz-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1.5px solid; opacity: 0.2; }
+.raiz-chakra { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); width: 80px; flex-shrink: 0; }
+.raiz-need { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--text); flex: 1; }
+
+/* Estratégias Atuais */
+.estrat-atuais-icon { background: var(--red-bg); border: 1px solid var(--red-border); }
+.estrat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .estrat-grid { grid-template-columns: 1fr; } }
+.estrat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: border-color 0.2s; }
+.estrat-card:hover { border-color: var(--red-border); }
+.estrat-chakra { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.estrat-chakra-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.estrat-text { font-size: 14px; color: var(--text2); line-height: 1.55; font-weight: 500; }
+.estrat-tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; margin-top: 10px; }
+.tag-bloqueado { background: #FEF3C7; color: #92400E; }
+.tag-excessivo { background: #FEE2E2; color: #991B1B; }
+
+/* Estratégias Novas */
+.nec-icon { background: var(--green-bg); border: 1px solid var(--green-border); }
+.nec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .nec-grid { grid-template-columns: 1fr; } }
+.nec-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; transition: border-color 0.2s; }
+.nec-card:hover { border-color: var(--green-border); }
+.nec-chakra { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; }
+.nec-chakra-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+.nec-text { font-size: 14px; color: var(--text2); line-height: 1.55; font-weight: 500; }
+
+/* Resultado */
+.res-icon { background: #EFF6FF; border: 1px solid #BFDBFE; }
+.res-container { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.res-cols { display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 480px) { .res-cols { grid-template-columns: 1fr; } }
+.res-col { padding: 20px 22px; }
+.res-col-want { border-right: 1px solid var(--border-light); }
+@media (max-width: 480px) { .res-col-want { border-right: none; border-bottom: 1px solid var(--border-light); } }
+.res-col-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+.res-col-want .res-col-label { color: var(--green-text); }
+.res-col-have .res-col-label { color: var(--red-text); }
+.res-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+.res-item:last-child { margin-bottom: 0; }
+.res-bullet { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+.res-col-want .res-bullet { background: var(--green-muted); }
+.res-col-have .res-bullet { background: var(--red-text); opacity: 0.5; }
+.res-item-text { font-size: 13.5px; line-height: 1.55; color: var(--text2); }
+.res-gap-bar { display: flex; align-items: center; gap: 12px; padding: 14px 22px; background: var(--border-light); }
+.res-gap-label { font-size: 11px; font-weight: 600; color: var(--text-muted); white-space: nowrap; }
+.res-gap-track { flex: 1; height: 6px; background: var(--red-bg); border-radius: 99px; overflow: hidden; }
+.res-gap-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--red-border), var(--amber-border), var(--green-border)); }
+
+/* Capacidades */
+.cap-icon { background: #FDF4FF; border: 1px solid #F0ABFC; }
+.cap-list { display: flex; flex-direction: column; gap: 8px; }
+.cap-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; display: flex; align-items: baseline; gap: 12px; transition: border-color 0.2s; }
+.cap-item:hover { border-color: var(--accent-border); }
+.cap-name { font-size: 14px; font-weight: 700; color: var(--text); white-space: nowrap; flex-shrink: 0; }
+.cap-dash { color: var(--border); flex-shrink: 0; }
+.cap-desc { font-size: 13px; color: var(--text3); line-height: 1.5; font-style: italic; }
+.cap-chakra-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); background: var(--border-light); padding: 3px 8px; border-radius: 6px; margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+.cap-chakra-tag-dot { width: 5px; height: 5px; border-radius: 50%; }
+
+/* Lições */
+.lic-icon { background: var(--purple-bg); border: 1px solid var(--purple-border); }
+.lic-list { display: flex; flex-direction: column; gap: 10px; }
+.lic-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; display: flex; gap: 14px; align-items: flex-start; transition: border-color 0.2s; }
+.lic-item:hover { border-color: var(--accent-border); }
+.lic-num { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--accent); line-height: 1; flex-shrink: 0; padding-top: 2px; }
+.lic-title { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.lic-desc { font-size: 13px; color: var(--text3); line-height: 1.6; }
+
+/* Recompensas */
+.rec-icon { background: var(--green-bg); border: 1px solid var(--green-border); }
+.rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 520px) { .rec-grid { grid-template-columns: 1fr 1fr; } }
+.rec-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 16px; text-align: center; transition: all 0.25s; }
+.rec-card:hover { border-color: var(--green-border); background: var(--green-bg); }
+.rec-emoji { font-size: 22px; margin-bottom: 8px; }
+.rec-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.rec-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+/* Antes/Depois */
+.trans-icon { background: var(--accent-soft); border: 1px solid var(--accent-border); }
+.trans-container { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.trans-header-row { display: grid; grid-template-columns: 1fr 40px 1fr; border-bottom: 1px solid var(--border); }
+.trans-col-header { padding: 14px 20px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; }
+.trans-col-before { background: var(--red-bg); color: var(--red-text); }
+.trans-col-arrow { display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 14px; background: var(--border-light); }
+.trans-col-after { background: var(--green-bg); color: var(--green-text); }
+.trans-row { display: grid; grid-template-columns: 1fr 40px 1fr; border-bottom: 1px solid var(--border-light); }
+.trans-row:last-child { border-bottom: none; }
+.trans-row-label { grid-column: 1 / -1; padding: 12px 20px 0; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+.trans-cell { padding: 8px 20px 14px; font-size: 13px; line-height: 1.55; }
+.trans-cell-before { color: var(--red-muted); }
+.trans-cell-arrow { display: flex; align-items: center; justify-content: center; color: var(--border); font-size: 16px; }
+.trans-cell-after { color: var(--green-muted); font-weight: 500; }
+.trans-badge-row { display: grid; grid-template-columns: 1fr 40px 1fr; padding: 16px 20px; background: var(--border-light); }
+.trans-badge { display: inline-flex; align-items: center; justify-content: center; padding: 4px 14px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+.badge-10 { background: var(--red-bg); color: var(--red-text); border: 1px solid var(--red-border); }
+.badge-30 { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green-border); }
+.trans-badge-center { display: flex; align-items: center; justify-content: center; }
+
+/* Interno vs Externo */
+.int-ext-container { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.int-ext-cols { display: grid; grid-template-columns: 1fr 1fr; }
+@media (max-width: 480px) { .int-ext-cols { grid-template-columns: 1fr; } }
+.int-ext-col { padding: 20px 22px; }
+.int-ext-col-int { border-right: 1px solid var(--border-light); }
+@media (max-width: 480px) { .int-ext-col-int { border-right: none; border-bottom: 1px solid var(--border-light); } }
+.int-ext-col-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.int-ext-col-int .int-ext-col-label { color: var(--accent-plexo); }
+.int-ext-col-ext .int-ext-col-label { color: var(--accent-laringeo); }
+.int-ext-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.int-ext-item:last-child { margin-bottom: 0; }
+.int-ext-bullet { width: 6px; height: 6px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+.int-ext-col-int .int-ext-bullet { background: var(--accent-plexo); opacity: 0.6; }
+.int-ext-col-ext .int-ext-bullet { background: var(--accent-laringeo); opacity: 0.6; }
+.int-ext-item-text { font-size: 13.5px; line-height: 1.55; color: var(--text2); }
+.int-ext-badge { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 2px 8px; border-radius: 6px; }
+.int-ext-badge-pode { background: #DBEAFE; color: #1E40AF; }
+.int-ext-badge-nao { background: #FEE2E2; color: #991B1B; }
+.int-ext-footer { padding: 14px 22px; background: var(--border-light); font-size: 13px; color: var(--text3); line-height: 1.5; text-align: center; }
+.int-ext-footer strong { color: var(--text2); }
+.int-ext-icon { background: #EFF6FF; border: 1px solid #BFDBFE; }
+
+/* CTA to deep view */
+.cta-deep {
+    background: var(--card);
+    border: 2px dashed var(--accent-border);
+    border-radius: 16px;
+    padding: 22px 18px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+.cta-deep:hover { border-color: var(--accent); background: var(--accent-soft); }
+.cta-deep-icon { font-size: 22px; margin-bottom: 6px; }
+.cta-deep-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.cta-deep-sub { font-size: 12px; color: var(--text3); line-height: 1.4; }
+
+.m-footer { text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 11px; }
+.m-footer-mark { font-family: 'Fraunces', serif; font-size: 14px; color: var(--accent); margin-bottom: 4px; }
+
+/* ══════════════════════════════════════════════════════
+   VIEW 2: RELATÓRIO COMPLETO
+   ══════════════════════════════════════════════════════ */
+.full-page { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
+
+.full-header { text-align: center; margin-bottom: 40px; padding-top: 20px; }
+.full-header-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.18em; }
+.full-header h1 { font-family: 'Fraunces', serif; font-size: 30px; color: var(--text); margin-top: 6px; font-weight: 600; }
+.full-header-sub { font-size: 14px; color: var(--text3); margin-top: 8px; }
+
+.caso-box { background: #1F2937; color: #F9FAFB; border-radius: 16px; padding: 24px 28px; margin-bottom: 40px; }
+.caso-box .label { font-size: 11px; font-weight: 700; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+.caso-box p { font-size: 15px; line-height: 1.7; color: #E5E7EB; font-style: italic; }
+
+.modulo { margin-bottom: 48px; }
+.modulo-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border-light); }
+.modulo-num { background: var(--text); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.modulo-title { font-family: 'Fraunces', serif; font-size: 22px; color: var(--text); font-weight: 600; }
+.modulo p { font-size: 15px; margin-bottom: 16px; color: var(--text); line-height: 1.7; }
+.modulo .destaque { background: var(--border-light); border-left: 3px solid var(--text-muted); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; font-size: 14px; color: var(--text); line-height: 1.7; }
+.modulo .destaque-positivo { background: var(--green-bg); border-left: 3px solid var(--accent-cardiaco); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; font-size: 14px; color: var(--green-text); line-height: 1.7; }
+.modulo .destaque-alerta { background: var(--amber-bg); border-left: 3px solid var(--accent-plexo); padding: 14px 18px; border-radius: 0 10px 10px 0; margin: 16px 0; font-size: 14px; color: var(--amber-text); line-height: 1.7; }
+.formula-step { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; margin: 12px 0; }
+.formula-step .step-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.formula-step p { font-size: 14px; margin-bottom: 0; line-height: 1.7; }
+
+.protocolo-etapa { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 24px; margin-bottom: 16px; }
+.protocolo-etapa .etapa-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.etapa-num { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.etapa-title { font-size: 17px; font-weight: 700; color: var(--text); }
+.lembrete-box { padding: 12px 16px; border-radius: 10px; margin: 8px 0; font-size: 15px; line-height: 1.5; font-style: italic; }
+.lembrete-p1 { background: #FEF2F2; border-left: 3px solid #EF4444; color: #991B1B; }
+.lembrete-p2 { background: var(--green-bg); border-left: 3px solid var(--accent-cardiaco); color: var(--green-text); }
+
+.ext-table { width: 100%; border-collapse: separate; border-spacing: 0; margin: 16px 0; font-size: 13px; }
+.ext-table th { background: var(--border-light); padding: 10px 14px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text3); }
+.ext-table th:first-child { border-radius: 10px 0 0 0; }
+.ext-table th:last-child { border-radius: 0 10px 0 0; }
+.ext-table td { padding: 10px 14px; border-bottom: 1px solid var(--border-light); vertical-align: top; line-height: 1.6; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.badge-sim { background: #DBEAFE; color: #1E40AF; }
+.badge-nao { background: #FEE2E2; color: #991B1B; }
+
+/* Soul HUD */
+.hud-divider { text-align: center; margin: 56px 0 40px; position: relative; }
+.hud-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); }
+.hud-divider span { background: var(--bg); padding: 0 20px; position: relative; font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.15em; }
+.hud-container { max-width: 460px; margin: 0 auto; }
+.hud-header { text-align: center; margin-bottom: 24px; }
+.hud-header .hud-label { font-size: 10px; font-weight: 700; color: #CBD5E1; text-transform: uppercase; letter-spacing: 0.18em; }
+.hud-header .hud-title { font-size: 22px; font-weight: 700; color: var(--text); margin-top: 4px; }
+.hud-score { background: #111827; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; }
+.hud-score-circle { width: 52px; height: 52px; border-radius: 50%; border: 3px solid var(--accent-laringeo); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: var(--accent-laringeo); flex-shrink: 0; }
+.hud-score-info { flex: 1; }
+.hud-score-title { font-size: 13px; font-weight: 600; color: #F9FAFB; }
+.hud-score-sub { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+.xp-bar { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.xp-bar-track { flex: 1; height: 6px; background: #374151; border-radius: 99px; overflow: hidden; }
+.xp-bar-fill { height: 100%; border-radius: 99px; }
+.xp-bar-label { font-size: 11px; font-weight: 700; color: #9CA3AF; min-width: 32px; text-align: right; }
+.xp-bar-light .xp-bar-track { background: #E5E7EB; }
+.hud-lembrete { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; margin-bottom: 20px; }
+.hud-lembrete .lem-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.hud-lembrete .lem-text { font-size: 13px; color: var(--text); line-height: 1.5; font-style: italic; }
+.hud-card { background: var(--card); border-radius: 14px; border: 1px solid var(--border-light); margin-bottom: 12px; overflow: hidden; }
+.hud-card-header { padding: 16px 18px; display: flex; align-items: center; gap: 12px; }
+.hud-card-emoji { font-size: 28px; line-height: 1; }
+.hud-card-info { flex: 1; }
+.hud-card-name { font-size: 16px; font-weight: 700; color: var(--text); }
+.hud-card-badges { display: flex; align-items: center; gap: 6px; margin-top: 2px; flex-wrap: wrap; }
+.hud-badge { padding: 2px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.hud-badge-blocked { background: #FEF3C7; color: #D97706; }
+.hud-badge-excessive { background: #EDE9FE; color: #7C3AED; }
+.hud-badge-role { color: #9CA3AF; font-weight: 600; font-size: 10px; }
+.hud-card-body { padding: 0 18px 18px; }
+.hud-card-tema { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 14px; }
+.hud-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hud-col-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.hud-col-label .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+.hud-col-red .hud-col-label { color: #DC2626; }
+.hud-col-red .dot { background: #EF4444; }
+.hud-col-green .hud-col-label { color: #059669; }
+.hud-col-green .dot { background: #10B981; }
+.hud-item { font-size: 12px; padding: 7px 10px; border-radius: 8px; margin-bottom: 4px; line-height: 1.4; }
+.hud-item-red { background: #FEF3C7; color: #92400E; }
+.hud-item-green { background: #ECFDF5; color: #065F46; }
+.hud-missao { margin-top: 14px; border: 1px dashed; border-radius: 10px; padding: 10px 14px; }
+.hud-missao-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.hud-missao-text { font-size: 13px; color: var(--text); line-height: 1.5; }
+.hud-footer { text-align: center; padding: 28px 0 16px; font-size: 10px; color: #CBD5E1; }
+
+/* ══════════════════════════════════════════════════════
+   VIEW 3: LEMBRETES
+   ══════════════════════════════════════════════════════ */
+.lem-page { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; }
+
+.lem-header { text-align: center; margin-bottom: 36px; animation: fadeUp 0.5s ease both; }
+.lem-header-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.lem-header h1 { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; color: var(--text); line-height: 1.2; margin-bottom: 6px; }
+.lem-header-sub { font-size: 13px; color: var(--text-muted); max-width: 400px; margin: 0 auto; }
+
+.lem-central { background: var(--text); color: #F5F5F0; border-radius: 20px; padding: 32px 28px; text-align: center; margin-bottom: 32px; animation: fadeUp 0.5s ease 0.05s both; }
+.lem-central-icon { font-size: 28px; margin-bottom: 12px; }
+.lem-central-frase { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; line-height: 1.4; color: #F5F5F0; margin-bottom: 12px; }
+.lem-central-sub { font-size: 13px; color: rgba(255,255,255,0.5); font-style: italic; }
+
+.lem-section { margin-bottom: 28px; }
+.lem-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; padding-left: 2px; }
+
+.frase-list { display: flex; flex-direction: column; gap: 10px; }
+.frase-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; transition: all 0.25s; }
+.frase-card:hover { border-color: var(--accent-border); box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.frase-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.frase-chakra-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.frase-chakra-name { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+.frase-texto { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 600; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+.frase-contexto { font-size: 13px; color: var(--text3); line-height: 1.55; }
+
+.conceito-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 480px) { .conceito-grid { grid-template-columns: 1fr; } }
+.conceito-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; transition: all 0.25s; }
+.conceito-card:hover { border-color: var(--green-border); background: var(--green-bg); }
+.conceito-emoji { font-size: 20px; margin-bottom: 10px; }
+.conceito-titulo { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.conceito-desc { font-size: 12px; color: var(--text3); line-height: 1.5; }
+
+.antidoto-list { display: flex; flex-direction: column; gap: 8px; }
+.antidoto-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: 1fr auto 1fr; align-items: stretch; }
+.antidoto-antiga { padding: 14px 16px; font-size: 13px; color: var(--red-text); background: var(--red-bg); line-height: 1.5; font-style: italic; }
+.antidoto-seta { display: flex; align-items: center; justify-content: center; padding: 0 8px; color: var(--text-muted); font-size: 14px; background: var(--border-light); }
+.antidoto-nova { padding: 14px 16px; font-size: 13px; color: var(--green-muted); background: var(--green-bg); line-height: 1.5; font-weight: 500; }
+
+.mantra-strip { background: var(--accent-soft); border: 1px solid var(--accent-border); border-radius: 16px; padding: 24px; text-align: center; }
+.mantra-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.mantra-frase { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text); line-height: 1.4; margin-bottom: 8px; }
+.mantra-sub { font-size: 12px; color: var(--text3); }
+
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@media print { body { padding: 0; } .tab-bar { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ TAB BAR ═══════════ -->
+<nav class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('mapa')" id="btn-mapa">
+        ✦ Mapa<span class="tab-badge tab-badge-leve">Leve</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('completo')" id="btn-completo">
+        📖 Relatório<span class="tab-badge tab-badge-completo">Completo</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('lembretes')" id="btn-lembretes">
+        💡 Lembretes<span class="tab-badge tab-badge-lembrete">Prático</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('acoes')" id="btn-acoes">
+        ⚡ Ações<span class="tab-badge tab-badge-acoes">Fazer</span>
+    </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VIEW 1: MAPA DA SITUAÇÃO
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-view active" id="view-mapa">
+<div class="page">
+
+    <div class="m-header">
+        <div class="m-header-eyebrow">Jogo da Alma</div>
+        <h1>Mapa da Situação</h1>
+        <div class="m-header-sub">O que a vida está pedindo, ensinando e oferecendo</div>
+    </div>
+
+    <div class="situacao">
+        <div class="situacao-label">Sua Situação</div>
+        <div class="situacao-text">Minha mãe falou pra minha filha Emma que ser vegana é coisa de gente egoísta. Faz 4 dias e não consegui falar nada. Toda vez que penso em ter essa conversa sinto um peso enorme, como se eu fosse destruir ela. Fico pensando que ela já tem tantos problemas. Engulo e finjo que tá tudo bem, mas por dentro tô com raiva.</div>
+    </div>
+
+    <!-- Necessidades Raiz -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon nec-raiz-icon">🌱</div>
+            <div class="section-title">Necessidades Raiz</div>
+        </div>
+        <div class="raiz-strip">
+            <div class="raiz-item"><div class="raiz-dot" style="background:#4CAF82;border-color:#4CAF82"></div><div class="raiz-chakra">Cardíaco</div><div class="raiz-need">Sentir-se amado e conectado</div></div>
+            <div class="raiz-item"><div class="raiz-dot" style="background:#4A9FD9;border-color:#4A9FD9"></div><div class="raiz-chakra">Laríngeo</div><div class="raiz-need">Sentir-se ouvido e autêntico</div></div>
+            <div class="raiz-item"><div class="raiz-dot" style="background:#E8A317;border-color:#E8A317"></div><div class="raiz-chakra">Plexo Solar</div><div class="raiz-need">Sentir-se digno e capaz</div></div>
+            <div class="raiz-item"><div class="raiz-dot" style="background:#C77DBA;border-color:#C77DBA"></div><div class="raiz-chakra">Coronário</div><div class="raiz-need">Sentir que faz sentido e há propósito</div></div>
+        </div>
+    </div>
+
+    <!-- Estratégias Atuais -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon estrat-atuais-icon">🔴</div>
+            <div class="section-title">Estratégias Atuais</div>
+        </div>
+        <div class="estrat-grid">
+            <div class="estrat-card">
+                <div class="estrat-chakra"><span class="estrat-chakra-dot" style="background:#4CAF82"></span>Cardíaco — Excessivo</div>
+                <div class="estrat-text">Sacrificar a própria verdade para não machucar o outro — confundir amor com anulação</div>
+                <div class="estrat-tag tag-excessivo">Excessivo</div>
+            </div>
+            <div class="estrat-card">
+                <div class="estrat-chakra"><span class="estrat-chakra-dot" style="background:#4A9FD9"></span>Laríngeo — Bloqueado</div>
+                <div class="estrat-text">Engolir o que sente, fingir que tá tudo bem — silêncio como proteção</div>
+                <div class="estrat-tag tag-bloqueado">Bloqueado</div>
+            </div>
+            <div class="estrat-card">
+                <div class="estrat-chakra"><span class="estrat-chakra-dot" style="background:#E8A317"></span>Plexo Solar — Bloqueado</div>
+                <div class="estrat-text">Não se posicionar por medo de ser "o problema" — ceder espaço pra evitar conflito</div>
+                <div class="estrat-tag tag-bloqueado">Bloqueado</div>
+            </div>
+            <div class="estrat-card">
+                <div class="estrat-chakra"><span class="estrat-chakra-dot" style="background:#C77DBA"></span>Coronário — Bloqueado</div>
+                <div class="estrat-text">Tratar desconforto como destruição — assumir que a mãe não aguenta a verdade</div>
+                <div class="estrat-tag tag-bloqueado">Bloqueado</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Estratégias Novas -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon nec-icon">🟢</div>
+            <div class="section-title">Estratégias Novas</div>
+        </div>
+        <div class="nec-grid">
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#4CAF82"></span>Cardíaco</div><div class="nec-text">Amar sem se anular — manter o vínculo sem engolir a própria verdade</div></div>
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#4A9FD9"></span>Laríngeo</div><div class="nec-text">Expressar desconforto sem destruir — encontrar a terceira via entre calar e atacar</div></div>
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#E8A317"></span>Plexo Solar</div><div class="nec-text">Ocupar espaço sem culpa — existir como mãe sem pedir permissão</div></div>
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#C77DBA"></span>Coronário</div><div class="nec-text">Confiar que desconforto não é destruição — cada um sustenta suas emoções</div></div>
+        </div>
+    </div>
+
+    <!-- O Preço a Aceitar -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon res-icon">🪙</div>
+            <div class="section-title">O Preço a Aceitar</div>
+        </div>
+        <p style="font-size:13px;color:var(--text3);margin:-4px 0 14px;line-height:1.6">Cada estratégia nova cobra um preço. Ele não é o obstáculo — é o custo saudável de sair do bloqueio.</p>
+        <div class="nec-grid">
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#4CAF82"></span>Cardíaco</div><div class="nec-text">A culpa de não agradar ao pôr um limite — tolerá-la sem correr pra consertar.</div></div>
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#4A9FD9"></span>Laríngeo</div><div class="nec-text">A exposição de desagradar e o risco de ser mal interpretada — falar mesmo assim.</div></div>
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#E8A317"></span>Plexo Solar</div><div class="nec-text">A tensão de sustentar sua posição contra quem você ama — bancá-la sem ceder nem atacar.</div></div>
+            <div class="nec-card"><div class="nec-chakra"><span class="nec-chakra-dot" style="background:#C77DBA"></span>Coronário</div><div class="nec-text">O desconforto de não controlar como sua mãe vai reagir — confiar que ela sustenta a própria emoção.</div></div>
+        </div>
+    </div>
+
+    <!-- Resultado -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon res-icon">🎯</div>
+            <div class="section-title">Resultado</div>
+        </div>
+        <div class="res-container">
+            <div class="res-cols">
+                <div class="res-col res-col-want">
+                    <div class="res-col-label">✦ O que você quer</div>
+                    <div class="res-item"><div class="res-bullet"></div><div class="res-item-text">Relação saudável com a mãe, onde ambas se respeitam</div></div>
+                    <div class="res-item"><div class="res-bullet"></div><div class="res-item-text">Emma crescer vendo que limites são normais e necessários</div></div>
+                    <div class="res-item"><div class="res-bullet"></div><div class="res-item-text">Harmonia familiar baseada em verdade, não em silêncio</div></div>
+                </div>
+                <div class="res-col res-col-have">
+                    <div class="res-col-label">◆ O que você tem hoje</div>
+                    <div class="res-item"><div class="res-bullet"></div><div class="res-item-text">Paz falsa mantida por silêncio — raiva crescendo por dentro</div></div>
+                    <div class="res-item"><div class="res-bullet"></div><div class="res-item-text">Emma vendo que quando cruzam seu limite, nada acontece</div></div>
+                    <div class="res-item"><div class="res-bullet"></div><div class="res-item-text">Ressentimento acumulando, distância substituindo conexão</div></div>
+                </div>
+            </div>
+            <div class="res-gap-bar">
+                <div class="res-gap-label">Gap</div>
+                <div class="res-gap-track"><div class="res-gap-fill" style="width:35%"></div></div>
+                <div class="res-gap-label" style="color:var(--text3)">A distância entre os dois é o desafio</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interno vs Externo -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon int-ext-icon">🔀</div>
+            <div class="section-title">Interno vs Externo</div>
+        </div>
+        <div class="int-ext-container">
+            <div class="int-ext-cols">
+                <div class="int-ext-col int-ext-col-int">
+                    <div class="int-ext-col-label">☀️ Depende de você</div>
+                    <div class="int-ext-item"><div class="int-ext-bullet"></div><div class="int-ext-item-text">Reprogramar o padrão de silêncio — dissociar a culpa do ato de falar <span class="int-ext-badge int-ext-badge-pode">Pode mudar</span></div></div>
+                    <div class="int-ext-item"><div class="int-ext-bullet"></div><div class="int-ext-item-text">Aprender a ferramenta do confronto respeitoso: "eu te amo + o que me magoou + o que preciso" <span class="int-ext-badge int-ext-badge-pode">Pode mudar</span></div></div>
+                    <div class="int-ext-item"><div class="int-ext-bullet"></div><div class="int-ext-item-text">Decidir ter a conversa — e sustentar quando a reação vier <span class="int-ext-badge int-ext-badge-pode">Pode mudar</span></div></div>
+                </div>
+                <div class="int-ext-col int-ext-col-ext">
+                    <div class="int-ext-col-label">🌍 Não depende de você</div>
+                    <div class="int-ext-item"><div class="int-ext-bullet"></div><div class="int-ext-item-text">Como sua mãe vai reagir — ela pode ouvir, chorar, se defender ou surpreender <span class="int-ext-badge int-ext-badge-nao">Não controla</span></div></div>
+                    <div class="int-ext-item"><div class="int-ext-bullet"></div><div class="int-ext-item-text">Se ela vai mudar o comportamento com a Emma depois da conversa <span class="int-ext-badge int-ext-badge-nao">Não controla</span></div></div>
+                </div>
+            </div>
+            <div class="int-ext-footer"><strong>O trabalho é paralelo</strong> — resolve o interno pra ter condição de agir, age no externo pra provar que o programa antigo estava errado</div>
+        </div>
+    </div>
+
+    <!-- Capacidades -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon cap-icon">💎</div>
+            <div class="section-title">Capacidades em Desenvolvimento</div>
+        </div>
+        <div class="cap-list">
+            <div class="cap-item"><div class="cap-name">Amor próprio</div><div class="cap-dash">—</div><div class="cap-desc">se incluir na equação</div><div class="cap-chakra-tag"><span class="cap-chakra-tag-dot" style="background:#4CAF82"></span> Cardíaco</div></div>
+            <div class="cap-item"><div class="cap-name">Limites amorosos</div><div class="cap-dash">—</div><div class="cap-desc">"não foi ok" sem "não te amo"</div><div class="cap-chakra-tag"><span class="cap-chakra-tag-dot" style="background:#4CAF82"></span> Cardíaco</div></div>
+            <div class="cap-item"><div class="cap-name">Coragem expressiva</div><div class="cap-dash">—</div><div class="cap-desc">falar mesmo quando a voz treme</div><div class="cap-chakra-tag"><span class="cap-chakra-tag-dot" style="background:#4A9FD9"></span> Laríngeo</div></div>
+            <div class="cap-item"><div class="cap-name">Confronto respeitoso</div><div class="cap-dash">—</div><div class="cap-desc">dizer a verdade sem precisar destruir</div><div class="cap-chakra-tag"><span class="cap-chakra-tag-dot" style="background:#4A9FD9"></span> Laríngeo</div></div>
+            <div class="cap-item"><div class="cap-name">Autoestima estável</div><div class="cap-dash">—</div><div class="cap-desc">existir sem pedir permissão ao outro</div><div class="cap-chakra-tag"><span class="cap-chakra-tag-dot" style="background:#E8A317"></span> Plexo Solar</div></div>
+            <div class="cap-item"><div class="cap-name">Aceitação existencial</div><div class="cap-dash">—</div><div class="cap-desc">desconforto é passagem, não destruição</div><div class="cap-chakra-tag"><span class="cap-chakra-tag-dot" style="background:#C77DBA"></span> Coronário</div></div>
+        </div>
+    </div>
+
+    <!-- Lições -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon lic-icon">📖</div>
+            <div class="section-title">Lições</div>
+        </div>
+        <div class="lic-list">
+            <div class="lic-item"><div class="lic-num">1</div><div><div class="lic-title">Amor e verdade não são opostos</div><div class="lic-desc">A harmonia falsa — fingir que tá tudo bem — corrói mais do que o conflito honesto. Falar com amor não destrói; calar com raiva é que destrói.</div></div></div>
+            <div class="lic-item"><div class="lic-num">2</div><div><div class="lic-title">Proteger o outro da verdade é controlá-lo</div><div class="lic-desc">Quando você decide que sua mãe "não aguentaria" ouvir, você está tratando ela como frágil. Isso é controle disfarçado de cuidado — e tira dela o direito de se corrigir.</div></div></div>
+            <div class="lic-item"><div class="lic-num">3</div><div><div class="lic-title">Sua filha está aprendendo com seu silêncio</div><div class="lic-desc">Emma está vendo o que acontece quando alguém cruza um limite: nada. Se você não se posiciona, ensina que engolir é o caminho. O modelo é mais forte que o discurso.</div></div></div>
+        </div>
+    </div>
+
+    <!-- Recompensas -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon rec-icon">🏆</div>
+            <div class="section-title">Recompensas</div>
+        </div>
+        <div class="rec-grid">
+            <div class="rec-card"><div class="rec-emoji">💚</div><div class="rec-name">Amor maduro</div><div class="rec-sub">Amar sem se sacrificar</div></div>
+            <div class="rec-card"><div class="rec-emoji">🗣</div><div class="rec-name">Voz própria</div><div class="rec-sub">Falar sem medo de quebrar</div></div>
+            <div class="rec-card"><div class="rec-emoji">☀️</div><div class="rec-name">Autoafirmação</div><div class="rec-sub">Existir sem pedir desculpa</div></div>
+            <div class="rec-card"><div class="rec-emoji">🪞</div><div class="rec-name">Modelo para Emma</div><div class="rec-sub">Ensinar limites pelo exemplo</div></div>
+            <div class="rec-card"><div class="rec-emoji">🕊</div><div class="rec-name">Paz real</div><div class="rec-sub">Harmonia que não custa raiva</div></div>
+            <div class="rec-card"><div class="rec-emoji">👑</div><div class="rec-name">Confiança no processo</div><div class="rec-sub">Saber que desconforto é passagem</div></div>
+        </div>
+    </div>
+
+    <!-- Antes / Depois -->
+    <div class="section">
+        <div class="section-header">
+            <div class="section-icon trans-icon">⚡</div>
+            <div class="section-title">Antes → Depois</div>
+        </div>
+        <div class="trans-container">
+            <div class="trans-header-row">
+                <div class="trans-col-header trans-col-before">Versão 1.0</div>
+                <div class="trans-col-arrow">→</div>
+                <div class="trans-col-header trans-col-after">Versão 3.0</div>
+            </div>
+            <div class="trans-row"><div class="trans-row-label">💭 Pensamento</div></div>
+            <div class="trans-row"><div class="trans-cell trans-cell-before">"Se eu falar, vou destruir ela"</div><div class="trans-cell trans-cell-arrow">→</div><div class="trans-cell trans-cell-after">"Ela é adulta. Pode receber uma verdade dita com amor."</div></div>
+            <div class="trans-row"><div class="trans-row-label">❤️‍🔥 Emoção</div></div>
+            <div class="trans-row"><div class="trans-cell trans-cell-before">Culpa paralisante + raiva engolida</div><div class="trans-cell trans-cell-arrow">→</div><div class="trans-cell trans-cell-after">Firmeza tranquila — desconforto sem paralisia</div></div>
+            <div class="trans-row"><div class="trans-row-label">⚡ Ação</div></div>
+            <div class="trans-row"><div class="trans-cell trans-cell-before">Finge que tá tudo bem. Engole. Acumula ressentimento.</div><div class="trans-cell trans-cell-arrow">→</div><div class="trans-cell trans-cell-after">Escolhe momento calmo. Fala com firmeza e amor. Sustenta o silêncio depois.</div></div>
+            <div class="trans-row"><div class="trans-row-label">🎯 Resultado</div></div>
+            <div class="trans-row"><div class="trans-cell trans-cell-before">Distância crescente. Raiva vira muro. Emma aprende a calar.</div><div class="trans-cell trans-cell-arrow">→</div><div class="trans-cell trans-cell-after">Relação honesta. Limite respeitado. Emma vê uma mãe que se posiciona.</div></div>
+            <div class="trans-row"><div class="trans-row-label">🪪 Identidade</div></div>
+            <div class="trans-row" style="border-bottom:none"><div class="trans-cell trans-cell-before">"Sou quem engole pra manter a paz"</div><div class="trans-cell trans-cell-arrow">→</div><div class="trans-cell trans-cell-after">"Sou quem sustenta amor e verdade ao mesmo tempo"</div></div>
+            <div class="trans-badge-row">
+                <div style="text-align:center"><span class="trans-badge badge-10">Adolescente</span></div>
+                <div class="trans-badge-center" style="color:var(--text-muted);font-size:12px">→</div>
+                <div style="text-align:center"><span class="trans-badge badge-30">Maduro</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTAs to other views -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:32px">
+        <div class="cta-deep" onclick="switchTab('completo')">
+            <div class="cta-deep-icon">📖</div>
+            <div class="cta-deep-title">Relatório Completo</div>
+            <div class="cta-deep-sub">Análise narrativa com os 4 módulos + Soul HUD</div>
+        </div>
+        <div class="cta-deep" onclick="switchTab('lembretes')">
+            <div class="cta-deep-icon">💡</div>
+            <div class="cta-deep-title">Lembretes</div>
+            <div class="cta-deep-sub">Frases e conceitos pra abrir antes da conversa</div>
+        </div>
+    </div>
+
+    <div class="m-footer">
+        <div class="m-footer-mark">✦</div>
+        Jogo da Alma · Mapa da Situação
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VIEW 2: RELATÓRIO COMPLETO
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-view" id="view-completo">
+<div class="full-page">
+
+    <div class="full-header">
+        <div class="full-header-label">Jogo da Alma 2.0</div>
+        <h1>Relatório Completo</h1>
+        <div class="full-header-sub">Módulos 1 a 4 + Soul HUD</div>
+    </div>
+
+    <div class="caso-box">
+        <div class="label">Caso — Anna</div>
+        <p>"Minha mãe veio visitar a gente e quando eu não estava em casa, ela falou pra minha filha Emma que ser vegana é coisa de gente egoísta. Quando eu descobri fiquei com muita raiva, mas já faz 4 dias e eu não consegui falar nada pra ela. Toda vez que eu penso em ter essa conversa eu sinto um peso enorme, como se eu fosse destruir ela. Eu sei que preciso falar, mas não consigo. Fico pensando que ela já tem tantos problemas, que eu vou ser mais um. E aí eu engulo e finjo que tá tudo bem, mas por dentro tô com raiva e me sentindo horrível."</p>
+    </div>
+
+    <!-- MÓDULO 1 -->
+    <div class="modulo">
+        <div class="modulo-header"><div class="modulo-num">1</div><div class="modulo-title">O que está acontecendo com você</div></div>
+        <p>Tem duas forças puxando você em direções opostas agora, Anna — e é por isso que você se sente horrível.</p>
+        <p>A primeira força é real e legítima: <strong>raiva</strong>. Sua mãe cruzou um limite concreto. Ela falou algo sobre suas escolhas — e falou pra sua filha, quando você não estava lá pra responder. Não é exagero sentir raiva disso. É uma resposta proporcional à situação.</p>
+        <p>A segunda força é o que trava a primeira: <strong>culpa antecipada</strong>. Antes mesmo de abrir a boca, você já sente o peso do que acha que vai causar. "Vou destruir ela." "Ela já tem tantos problemas." "Eu vou ser mais um." A culpa chega antes da conversa — e a conversa nunca acontece.</p>
+        <p>A cadeia funciona assim: algo acontece que exige posicionamento → você sente a necessidade de falar → a culpa antecipada dispara → você recua → engole → finge que tá tudo bem → a raiva não vai embora, ela fermenta → e agora, além da raiva pela situação original, tem a raiva por ter se calado. Duas raivas. E nenhuma com saída.</p>
+        <div class="destaque"><strong>O centro do problema:</strong> Laríngeo bloqueado — a voz está presa. Você sabe o que precisa dizer, mas o sistema trava antes de falar. Alimentando esse bloqueio tem o Cardíaco excessivo — a compaixão pela sua mãe virou autoanulação. Você está colocando o conforto emocional dela acima da proteção da Emma e do seu próprio bem-estar. E por baixo de tudo, o Plexo Solar bloqueado — a dificuldade de sustentar uma posição quando o outro é alguém que você ama.</div>
+        <p>O resultado visível: 4 dias de silêncio, raiva acumulada, e uma filha que ouviu algo sobre a própria mãe e não viu nenhuma resposta.</p>
+    </div>
+
+    <!-- MÓDULO 2 -->
+    <div class="modulo">
+        <div class="modulo-header"><div class="modulo-num">2</div><div class="modulo-title">Por que você funciona assim</div></div>
+        <div class="formula-step"><div class="step-label" style="color:var(--accent-laringeo)">Camada 1 — O Código da Espécie</div><p>No ambiente ancestral, confrontar alguém com poder sobre você — um pai, uma mãe, um líder — era arriscado. A hierarquia familiar era uma questão de sobrevivência, não de preferência. O cérebro desenvolveu um sistema que diz: <em>"não ameace o vínculo com quem cuida de você."</em> Essa cautela não é covardia — é um programa de proteção com milhões de anos. A espécie sobreviveu em parte porque os filhos aprenderam a não romper com quem os protege, mesmo quando discordam.</p></div>
+        <div class="formula-step"><div class="step-label" style="color:var(--accent-plexo)">Camada 2 — O Código da Sua História</div><p>Em algum momento, Anna, você aprendeu que expressar desacordo com sua mãe tem um custo alto. Talvez ela se magoasse visivelmente. Talvez chorasse, se fechasse, ou te fizesse sentir culpada por ter uma opinião diferente. O sistema registrou: <em>"quando eu falo o que penso, o vínculo fica ameaçado."</em> E a solução que funcionou foi calar. Engolir. Fingir que tá tudo bem. Isso não foi fraqueza — foi inteligência emocional da criança que você era, na situação que ela enfrentava.</p></div>
+        <div class="formula-step"><div class="step-label" style="color:var(--accent-cardiaco)">Intenção Positiva</div><p>O sistema inteiro está tentando proteger o vínculo com sua mãe. Ele sabe que sua mãe é importante pra você. Ele sabe que confrontar pode criar dor. E ele escolhe o silêncio porque é a forma que ele conhece de manter a relação intacta. <strong>Seu sistema não é seu inimigo.</strong> Ele está tentando cuidar de algo que você ama — só que com uma estratégia que não serve mais.</p></div>
+        <div class="formula-step"><div class="step-label" style="color:var(--accent-plexo)">Por que não é mais eficiente</div><p>Porque o silêncio não está protegendo o vínculo — está corroendo ele por dentro. Cada dia que passa sem a conversa, a raiva se acumula. A distância emocional cresce. Você está fisicamente presente mas emocionalmente se afastando. A estratégia que foi criada pra preservar o vínculo está destruindo o vínculo por dentro.</p><p>E tem mais: agora não é só sobre você e sua mãe. A Emma ouviu aquilo. Uma criança que viu a avó criticar as escolhas da mãe — e viu a mãe não responder. O silêncio aqui tem um custo que vai além de você.</p></div>
+        <div class="formula-step" style="border-color:var(--accent-cardiaco)"><div class="step-label" style="color:var(--accent-cardiaco)">Versão Atualizada</div><p>A intenção se mantém — proteger o vínculo com sua mãe. A estratégia atualizada é:</p><p><strong>Laríngeo equilibrado:</strong> <em>"Posso falar a verdade com respeito. Comunicação clara resolve mais que silêncio."</em></p><p><strong>Cardíaco equilibrado:</strong> <em>"Posso amar sem me anular. Manter limites saudáveis é cuidar do vínculo, não ameaçá-lo."</em></p><p><strong>Plexo Solar equilibrado:</strong> <em>"Posso me posicionar sem precisar dominar. Minha opinião tem valor mesmo que discordem."</em></p></div>
+
+        <div class="formula-step" style="border:2px solid var(--accent-border);background:var(--accent-soft)"><div class="step-label" style="color:var(--accent)">O Preço a Aceitar — o lado saudável do desconforto</div><p style="margin-bottom:14px">Sair do bloqueio tem um custo, e ele não é o obstáculo: é o pedágio da versão saudável de cada chakra. Esperar que falar fique confortável é esperar pra sempre. Aceitar o preço conscientemente <strong>é</strong> a saúde — não o que vem antes dela.</p><p style="margin-bottom:8px"><strong style="color:var(--accent-laringeo)">Laríngeo:</strong> falar vai te expor ao desconforto de desagradar sua mãe, ao risco do conflito e à chance de ser mal interpretada. Essa exposição é o preço da voz — não o sinal de que você errou.</p><p style="margin-bottom:8px"><strong style="color:var(--accent-cardiaco)">Cardíaco:</strong> pôr um limite vai fazer sua mãe sentir alguma dor, e você vai ter que tolerar isso sem correr pra consertar. A culpa de não agradar é o preço de amar com limite — e ela passa.</p><p style="margin-bottom:0"><strong style="color:var(--accent-plexo)">Plexo Solar:</strong> sustentar sua posição contra alguém que você ama vai gerar uma tensão que você vai querer dissolver na hora. Bancar essa tensão, sem ceder e sem atacar, é o preço da firmeza.</p></div>
+    </div>
+
+    <!-- MÓDULO 3 -->
+    <div class="modulo">
+        <div class="modulo-header"><div class="modulo-num">3</div><div class="modulo-title">O que fazer quando o padrão ativar</div></div>
+        <p>Você opera com duas mentes. A <strong>Mente Antiga</strong> é a que dispara a culpa antes da conversa, que diz "você vai destruir ela", que engole e finge. A <strong>Mente Nova</strong> é a que sabe que precisa falar, que sabe que o silêncio custa mais do que a conversa, que sabe que Emma precisa ver a mãe se posicionar. O problema não é saber — é que a Mente Antiga é mais rápida.</p>
+        <div class="protocolo-etapa">
+            <div class="etapa-header"><div class="etapa-num" style="background:#8B5CF6">1</div><div class="etapa-title">Dissociar</div></div>
+            <p style="font-size:14px">Quando você pensar em ter a conversa com sua mãe e sentir aquele peso no peito — pause. Reconheça:</p>
+            <div class="destaque" style="border-left-color:#8B5CF6;background:#F5F3FF"><em>"O programa de proteção de vínculo acabou de ligar. Ele está usando a culpa pra me impedir de falar. Isso é o programa — não é a realidade. Falar a verdade com respeito não destrói ninguém."</em></div>
+            <p style="font-size:14px">Você não é a culpa. Você é a consciência que observa a culpa aparecer. E quem observa pode escolher.</p>
+        </div>
+        <div class="protocolo-etapa">
+            <div class="etapa-header"><div class="etapa-num" style="background:#F59E0B">2</div><div class="etapa-title">Lembrar</div></div>
+            <div class="lembrete-box lembrete-p1"><strong>Parte 1 (neutraliza a Mente Antiga):</strong><br>"O programa acha que se eu falar, eu perco ela. Ele confunde confronto com destruição."</div>
+            <div class="lembrete-box lembrete-p2"><strong>Parte 2 (ativa a Mente Nova):</strong><br>"O vínculo não se protege com silêncio. Se protege com verdade dita com amor."</div>
+        </div>
+        <div class="protocolo-etapa">
+            <div class="etapa-header"><div class="etapa-num" style="background:#10B981">3</div><div class="etapa-title">Praticar</div></div>
+            <p style="font-size:14px">A ação concreta: tenha a conversa com sua mãe. Não precisa ser perfeita. Não precisa ser hoje se não estiver pronta — mas não pode ser nunca.</p>
+            <div class="destaque-positivo"><em>"Mãe, eu te amo e isso não muda. Mas o que você falou pra Emma sobre ser vegana me magoou. Não é sobre você concordar com as minhas escolhas — é sobre não diminuir elas na frente da minha filha. Eu preciso que você respeite isso, mesmo que não concorde."</em></div>
+            <p style="font-size:14px"><strong>O que esperar:</strong> ela pode reagir — se magoar, chorar, se defender. Isso é o processo dela, não culpa sua.</p>
+            <p style="font-size:14px"><strong>Se ela reagir mal:</strong> não recue. Sustente. Repita: <em>"Eu não estou brigando com você. Estou dizendo o que eu preciso."</em></p>
+            <div class="destaque-alerta"><strong>⚠️ Ponto de travamento provável:</strong> Dissociação emocional. A culpa vai chegar no corpo — peso no peito, nó na garganta, vontade de chorar antes de começar. Isso é o programa. Ele é intenso mas não é verdade.</div>
+            <p style="font-size:14px"><strong>E a Emma:</strong> depois, converse com Emma. Não precisa entrar em detalhes — mas ela precisa saber que a mãe viu, que a mãe se importa. <em>"A vovó disse uma coisa que não concordo. Ser vegana é uma escolha que eu fiz com carinho, e tenho orgulho dela."</em></p>
+        </div>
+    </div>
+
+    <!-- MÓDULO 4 -->
+    <div class="modulo">
+        <div class="modulo-header"><div class="modulo-num">4</div><div class="modulo-title">O que está acontecendo fora de você</div></div>
+        <p>Os Módulos 1 a 3 cobriram o que acontece dentro de você. Mas essa situação tem uma parte que não é interna: sua mãe é uma pessoa real com comportamento próprio.</p>
+        <table class="ext-table">
+            <thead><tr><th>Variável</th><th>Lacuna</th><th>Influência</th><th>Prescrição</th></tr></thead>
+            <tbody>
+                <tr><td><strong>A outra pessoa (mãe)</strong></td><td>Opiniões sobre veganismo, forma de se comunicar com a neta</td><td><span class="badge badge-nao">Não controla</span></td><td>Você não controla o que ela pensa. Controla o que comunica e que limites estabelece.</td></tr>
+                <tr><td><strong>Capacidade relacional</strong></td><td>Sabe o que quer dizer mas não consegue sustentar</td><td><span class="badge badge-sim">Pode influenciar</span></td><td>Módulos 1-3 — reprogramação do padrão de silêncio</td></tr>
+                <tr><td><strong>Ferramenta de comunicação</strong></td><td>Falta de modelo para confronto respeitoso</td><td><span class="badge badge-sim">Pode influenciar</span></td><td>Formato: "eu te amo + o que me magoou + o que preciso"</td></tr>
+                <tr><td><strong>Estratégia</strong></td><td>Estratégia atual é "engolir e fingir"</td><td><span class="badge badge-sim">Pode influenciar</span></td><td>Mudar para comunicação direta com respeito</td></tr>
+            </tbody>
+        </table>
+        <p><strong>A variável que você não controla:</strong> como sua mãe vai reagir. O que você controla é se vai falar ou não, e como vai falar.</p>
+        <p><strong>A decisão que o externo coloca na mesa:</strong> nesse caso não é "ficar ou sair" — é <em>"falar ou continuar calada."</em> E as duas opções têm custo.</p>
+        <div class="destaque"><strong>O cruzamento interno/externo:</strong> a prescrição externa é clara — ter a conversa. Mas o programa interno (culpa antecipada + medo de destruir o vínculo) trava a execução. O trabalho é paralelo. Cada vez que a Mente Nova sustentar uma posição com respeito, ela entrega evidência de que falar não destrói.</div>
+    </div>
+
+    <!-- SOUL HUD -->
+    <div class="hud-divider"><span>Soul HUD</span></div>
+    <div class="hud-container">
+        <div class="hud-header"><div class="hud-label">Jogo da Alma</div><div class="hud-title">Soul HUD</div></div>
+        <div class="hud-score">
+            <div class="hud-score-circle">30%</div>
+            <div class="hud-score-info">
+                <div class="hud-score-title">Consciência Geral</div>
+                <div class="hud-score-sub">3 chakras ativos · Foco: Laríngeo</div>
+                <div class="xp-bar"><div class="xp-bar-track"><div class="xp-bar-fill" style="width:30%;background:var(--accent-laringeo)"></div></div><div class="xp-bar-label">30%</div></div>
+            </div>
+        </div>
+        <div class="hud-lembrete"><div class="lem-label">💡 Lembrete da Mente Nova</div><div class="lem-text">"O vínculo não se protege com silêncio. Se protege com verdade dita com amor."</div></div>
+
+        <!-- Laríngeo -->
+        <div class="hud-card" style="border:2px solid rgba(59,130,246,0.2)">
+            <div class="hud-card-header"><div class="hud-card-emoji">🔵</div><div class="hud-card-info"><div class="hud-card-name">Laríngeo</div><div class="hud-card-badges"><span class="hud-badge hud-badge-blocked">Bloqueado</span><span class="hud-badge-role">★ Principal</span></div><div class="xp-bar xp-bar-light" style="margin-top:6px"><div class="xp-bar-track"><div class="xp-bar-fill" style="width:20%;background:var(--accent-laringeo)"></div></div><div class="xp-bar-label" style="color:#9CA3AF">20%</div></div></div></div>
+            <div class="hud-card-body">
+                <div class="hud-card-tema">Comunicação & Verdade</div>
+                <div class="hud-grid">
+                    <div class="hud-col-red"><div class="hud-col-label"><span class="dot"></span> Travado agora</div><div class="hud-item hud-item-red">4 dias sem falar o que precisa</div><div class="hud-item hud-item-red">"Se eu falar, vou destruir ela"</div><div class="hud-item hud-item-red">Engole mágoas sem comunicar</div><div class="hud-item hud-item-red">Finge que tá tudo bem</div></div>
+                    <div class="hud-col-green"><div class="hud-col-label"><span class="dot"></span> Para desbloquear</div><div class="hud-item hud-item-green">Coragem expressiva — falar mesmo quando é difícil</div><div class="hud-item hud-item-green">Confronto respeitoso — discordar sem destruir</div><div class="hud-item hud-item-green">Firmeza — sustentar a palavra sob pressão</div><div class="hud-item hud-item-green">"Comunicação clara resolve mais que silêncio"</div></div>
+                </div>
+                <div class="hud-missao" style="border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.04)"><div class="hud-missao-label" style="color:var(--accent-laringeo)">🎯 Missão Ativa</div><div class="hud-missao-text">Ter a conversa com sua mãe usando o formato: "eu te amo + o que me magoou + o que preciso."</div></div>
+            </div>
+        </div>
+
+        <!-- Cardíaco -->
+        <div class="hud-card">
+            <div class="hud-card-header"><div class="hud-card-emoji">💚</div><div class="hud-card-info"><div class="hud-card-name">Cardíaco</div><div class="hud-card-badges"><span class="hud-badge hud-badge-excessive">Excessivo</span><span class="hud-badge-role">Secundário</span></div><div class="xp-bar xp-bar-light" style="margin-top:6px"><div class="xp-bar-track"><div class="xp-bar-fill" style="width:35%;background:var(--accent-cardiaco)"></div></div><div class="xp-bar-label" style="color:#9CA3AF">35%</div></div></div></div>
+            <div class="hud-card-body">
+                <div class="hud-card-tema">Amor & Compaixão</div>
+                <div class="hud-grid">
+                    <div class="hud-col-red"><div class="hud-col-label"><span class="dot"></span> Travado agora</div><div class="hud-item hud-item-red">Coloca o conforto da mãe acima do próprio</div><div class="hud-item hud-item-red">"Ela já tem tantos problemas"</div><div class="hud-item hud-item-red">Culpa por querer se posicionar</div></div>
+                    <div class="hud-col-green"><div class="hud-col-label"><span class="dot"></span> Para desbloquear</div><div class="hud-item hud-item-green">Amor próprio — nutrir a si como nutre o outro</div><div class="hud-item hud-item-green">Limites amorosos — proteger-se sem fechar o coração</div><div class="hud-item hud-item-green">"Posso amar sem me anular"</div></div>
+                </div>
+                <div class="hud-missao" style="border-color:rgba(16,185,129,0.3);background:rgba(16,185,129,0.04)"><div class="hud-missao-label" style="color:var(--accent-cardiaco)">🎯 Missão Ativa</div><div class="hud-missao-text">Quando sentir a culpa chegar, reconhecer: "cuidar de mim também é cuidar da relação."</div></div>
+            </div>
+        </div>
+
+        <!-- Plexo Solar -->
+        <div class="hud-card">
+            <div class="hud-card-header"><div class="hud-card-emoji">☀️</div><div class="hud-card-info"><div class="hud-card-name">Plexo Solar</div><div class="hud-card-badges"><span class="hud-badge hud-badge-blocked">Bloqueado</span><span class="hud-badge-role">Apoio</span></div><div class="xp-bar xp-bar-light" style="margin-top:6px"><div class="xp-bar-track"><div class="xp-bar-fill" style="width:35%;background:var(--accent-plexo)"></div></div><div class="xp-bar-label" style="color:#9CA3AF">35%</div></div></div></div>
+            <div class="hud-card-body">
+                <div class="hud-card-tema">Poder & Identidade</div>
+                <div class="hud-grid">
+                    <div class="hud-col-red"><div class="hud-col-label"><span class="dot"></span> Travado agora</div><div class="hud-item hud-item-red">Não sustenta posição diante da mãe</div><div class="hud-item hud-item-red">Recua quando o outro reage</div><div class="hud-item hud-item-red">"Eu vou ser mais um problema"</div></div>
+                    <div class="hud-col-green"><div class="hud-col-label"><span class="dot"></span> Para desbloquear</div><div class="hud-item hud-item-green">Coragem — agir apesar do medo</div><div class="hud-item hud-item-green">Integridade — coerência entre o que sente e faz</div><div class="hud-item hud-item-green">"Posso me posicionar sem destruir"</div></div>
+                </div>
+                <div class="hud-missao" style="border-color:rgba(245,158,11,0.3);background:rgba(245,158,11,0.04)"><div class="hud-missao-label" style="color:var(--accent-plexo)">🎯 Missão Ativa</div><div class="hud-missao-text">Se a mãe reagir mal à conversa, não recuar. Sustentar: "não estou brigando, estou dizendo o que preciso."</div></div>
+            </div>
+        </div>
+
+        <div class="hud-footer">Jogo da Alma 2.0 · Soul HUD</div>
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VIEW 3: LEMBRETES
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-view" id="view-lembretes">
+<div class="lem-page">
+
+    <div class="lem-header">
+        <div class="lem-header-eyebrow">Jogo da Alma</div>
+        <h1>Lembretes</h1>
+        <div class="lem-header-sub">Frases e conceitos para relembrar quando a situação ativar</div>
+    </div>
+
+    <div class="lem-central">
+        <div class="lem-central-icon">💡</div>
+        <div class="lem-central-frase">"O vínculo não se protege com silêncio. Se protege com verdade dita com amor."</div>
+        <div class="lem-central-sub">Lembrete da Mente Nova — use quando sentir a culpa antes de falar</div>
+    </div>
+
+    <!-- Frases por chakra -->
+    <div class="lem-section" style="animation:fadeUp 0.5s ease 0.1s both">
+        <div class="lem-section-label">🔑 Uma frase por chakra</div>
+        <div class="frase-list">
+            <div class="frase-card">
+                <div class="frase-top"><div class="frase-chakra-dot" style="background:#4CAF82"></div><div class="frase-chakra-name">Cardíaco</div></div>
+                <div class="frase-texto">"Posso amar sem me anular."</div>
+                <div class="frase-contexto">Quando a culpa disser que se posicionar é parar de amar — lembre que amor que exige silêncio não é amor, é controle.</div>
+            </div>
+            <div class="frase-card">
+                <div class="frase-top"><div class="frase-chakra-dot" style="background:#4A9FD9"></div><div class="frase-chakra-name">Laríngeo</div></div>
+                <div class="frase-texto">"Falar com respeito não destrói ninguém."</div>
+                <div class="frase-contexto">Quando o programa disser que a conversa vai "destruir ela" — lembre que o que destrói é o acúmulo silencioso de raiva e distância.</div>
+            </div>
+            <div class="frase-card">
+                <div class="frase-top"><div class="frase-chakra-dot" style="background:#E8A317"></div><div class="frase-chakra-name">Plexo Solar</div></div>
+                <div class="frase-texto">"Minha necessidade também merece espaço."</div>
+                <div class="frase-contexto">Quando sentir que se posicionar é "ser mais um problema" — lembre que existir não é agressão. Quem se anula não resolve, acumula.</div>
+            </div>
+            <div class="frase-card">
+                <div class="frase-top"><div class="frase-chakra-dot" style="background:#C77DBA"></div><div class="frase-chakra-name">Coronário</div></div>
+                <div class="frase-texto">"Ela é adulta. Pode receber uma verdade."</div>
+                <div class="frase-contexto">Quando o programa tratar sua mãe como frágil demais pra ouvir — lembre que proteger alguém da verdade é tirar dela o direito de crescer.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conceitos macro -->
+    <div class="lem-section" style="animation:fadeUp 0.5s ease 0.15s both">
+        <div class="lem-section-label">✦ Conceitos para carregar</div>
+        <div class="conceito-grid">
+            <div class="conceito-card"><div class="conceito-emoji">⚔️</div><div class="conceito-titulo">Conflito ≠ Destruição</div><div class="conceito-desc">Confronto respeitoso fortalece relações. Silêncio é que corrói.</div></div>
+            <div class="conceito-card"><div class="conceito-emoji">🪞</div><div class="conceito-titulo">Culpa ≠ Verdade</div><div class="conceito-desc">A culpa é um programa antigo, não um GPS. Ela dispara antes da realidade confirmar.</div></div>
+            <div class="conceito-card"><div class="conceito-emoji">💚</div><div class="conceito-titulo">Limite ≠ Falta de amor</div><div class="conceito-desc">Dizer "não foi ok" sem dizer "não te amo" é a versão madura do amor.</div></div>
+            <div class="conceito-card"><div class="conceito-emoji">👁️</div><div class="conceito-titulo">Proteger ≠ Calar</div><div class="conceito-desc">Decidir que o outro "não aguenta" é controle disfarçado de cuidado.</div></div>
+            <div class="conceito-card"><div class="conceito-emoji">🌱</div><div class="conceito-titulo">Desconforto ≠ Perigo</div><div class="conceito-desc">A voz tremer, o peito apertar — é o programa antigo, não evidência de que está errado.</div></div>
+            <div class="conceito-card"><div class="conceito-emoji">👩‍👧</div><div class="conceito-titulo">Modelo > Discurso</div><div class="conceito-desc">Emma aprende mais vendo a mãe se posicionar do que ouvindo sobre limites.</div></div>
+        </div>
+    </div>
+
+    <!-- Antídotos -->
+    <div class="lem-section" style="animation:fadeUp 0.5s ease 0.2s both">
+        <div class="lem-section-label">🛡 Antídotos — quando o programa antigo falar</div>
+        <div class="antidoto-list">
+            <div class="antidoto-item"><div class="antidoto-antiga">"Vou destruir ela"</div><div class="antidoto-seta">→</div><div class="antidoto-nova">"Falar com amor não destrói. Calar com raiva é que destrói."</div></div>
+            <div class="antidoto-item"><div class="antidoto-antiga">"Ela já tem tantos problemas"</div><div class="antidoto-seta">→</div><div class="antidoto-nova">"Os problemas dela são dela. Minha necessidade também existe."</div></div>
+            <div class="antidoto-item"><div class="antidoto-antiga">"Eu vou ser mais um problema"</div><div class="antidoto-seta">→</div><div class="antidoto-nova">"Me posicionar não é criar problema. É resolver um."</div></div>
+            <div class="antidoto-item"><div class="antidoto-antiga">"É melhor deixar pra lá"</div><div class="antidoto-seta">→</div><div class="antidoto-nova">"Deixar pra lá é deixar a raiva crescer. A conta vem depois."</div></div>
+            <div class="antidoto-item"><div class="antidoto-antiga">"Se eu falar ela vai chorar"</div><div class="antidoto-seta">→</div><div class="antidoto-nova">"As emoções dela são responsabilidade dela. As minhas são minhas."</div></div>
+        </div>
+    </div>
+
+    <!-- Mantra de bolso -->
+    <div class="lem-section" style="animation:fadeUp 0.5s ease 0.25s both">
+        <div class="mantra-strip">
+            <div class="mantra-label">✦ Mantra de bolso</div>
+            <div class="mantra-frase">"Eu posso amar, falar e sustentar — ao mesmo tempo."</div>
+            <div class="mantra-sub">Repita antes da conversa. Na hora. E depois, quando a culpa tentar voltar.</div>
+        </div>
+    </div>
+
+    <div class="m-footer">
+        <div class="m-footer-mark">✦</div>
+        Jogo da Alma · Lembretes
+    </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     VIEW 4: AÇÕES RECOMENDADAS
+     ═══════════════════════════════════════════════════════════════════ -->
+<div class="tab-view" id="view-acoes">
+<div class="acoes-page">
+
+    <div class="acoes-header">
+        <div class="acoes-header-eyebrow">Jogo da Alma</div>
+        <h1>Ações Recomendadas</h1>
+        <div class="acoes-header-sub">O que fazer, quando fazer e o que cada ação desenvolve em você</div>
+    </div>
+
+    <div class="acao-principal">
+        <div class="acao-principal-label">⚡ Prescrição Central</div>
+        <div class="acao-principal-titulo">Ter a conversa com sua mãe</div>
+        <div class="acao-principal-porque"><strong>Por quê:</strong> Laríngeo bloqueado há 4 dias. Cardíaco excessivo protegendo o conforto dela acima do seu bem-estar. Plexo Solar cedendo espaço. Cada dia de silêncio reforça o padrão. A prescrição é clara: <strong>falar.</strong></div>
+    </div>
+
+    <div class="ferramenta-amostra">
+        <div class="ferramenta-amostra-header">
+            <span class="ferramenta-amostra-badge">🔧 Ferramenta</span>
+            <span class="ferramenta-amostra-nome">Confronto Respeitoso — amostra</span>
+        </div>
+        <div class="ferramenta-amostra-body">
+            <div class="ferramenta-amostra-script"><strong>"Mãe, eu te amo e isso não muda.</strong> Mas o que você falou pra Emma sobre ser vegana me magoou. Não é sobre você concordar com as minhas escolhas — é sobre não diminuir elas na frente da minha filha. <strong>Eu preciso que você respeite isso, mesmo que não concorde."</strong></div>
+            <div class="ferramenta-amostra-nota"><span class="ferramenta-amostra-nota-icon">💎</span><span>Essa é uma aplicação pontual da <strong>Ferramenta de Confronto Respeitoso</strong> — formato: amor + o que magoou + o que preciso. A versão completa ensina a usar em qualquer relação e contexto, com adaptações para diferentes perfis de reação do outro.</span></div>
+        </div>
+    </div>
+
+    <!-- AGORA -->
+    <div class="timing-section" style="animation:fadeUp 0.5s ease 0.1s both">
+        <div class="timing-header"><div class="timing-badge timing-agora">🔴 Agora</div><div class="timing-title">Próximas 48h</div></div>
+        <div class="acao-list">
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#E85454">1</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Escolha o momento e o lugar</div>
+                        <div class="acao-desc">Momento calmo, só vocês duas. Não no calor de outra discussão. Contexto seguro reduz chance de escalada.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">🔵 Laríngeo</span><span class="acao-tag acao-tag-tipo-prescritivo">Prescrição</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#E85454">2</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Tenha a conversa</div>
+                        <div class="acao-desc">Use a amostra da ferramenta acima como base. Se ela reagir, sustente a posição sem escalar. Não é convencer — é posicionar.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">🔵 Laríngeo</span><span class="acao-tag acao-tag-chakra">💚 Cardíaco</span><span class="acao-tag acao-tag-tipo-prescritivo">Prescrição</span></div>
+                        <div class="acao-ferramenta-hint"><div class="acao-ferramenta-hint-icon">💎</div><div class="acao-ferramenta-hint-text"><strong>Capacidade ativada:</strong> Coragem expressiva + Limites amorosos. Cada vez que fala apesar da culpa, essas capacidades se fortalecem.</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#E85454">3</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Conecte com Emma</div>
+                        <div class="acao-desc">Depois da conversa com a mãe, fale com Emma. Não precisa de detalhes — mas ela precisa saber que a mãe viu e se importa.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">💚 Cardíaco</span><span class="acao-tag acao-tag-tipo-prescritivo">Prescrição</span></div>
+                        <div class="acao-ferramenta-hint"><div class="acao-ferramenta-hint-icon">💎</div><div class="acao-ferramenta-hint-text"><strong>Capacidade ativada:</strong> Modelo para Emma. O que ela vê pesa mais do que o que ouve.</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTA SEMANA -->
+    <div class="timing-section" style="animation:fadeUp 0.5s ease 0.15s both">
+        <div class="timing-header"><div class="timing-badge timing-semana">🟡 Esta Semana</div><div class="timing-title">Próximos 7 dias</div></div>
+        <div class="acao-list">
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#F59E0B">4</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Registre o que aconteceu vs o que a mente previa</div>
+                        <div class="acao-desc">Escreva: o que a culpa disse que ia acontecer vs o que realmente aconteceu. Essa é a evidência mais forte contra o programa antigo — prova concreta de que falar não destrói.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">🟣 Coronário</span><span class="acao-tag acao-tag-tipo-prescritivo">Prescrição</span></div>
+                        <div class="acao-ferramenta-hint"><div class="acao-ferramenta-hint-icon">💎</div><div class="acao-ferramenta-hint-text"><strong>Ferramenta envolvida:</strong> Registro de Evidência — técnica de feedback que compara projeção vs realidade pra recalibrar o sistema. Versão completa no método.</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#F59E0B">5</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Mapeie onde mais o padrão aparece</div>
+                        <div class="acao-desc">O padrão "culpa → silêncio → raiva acumulada" provavelmente não existe só com sua mãe. Com o parceiro? No trabalho? Com amigas? Identifique pelo menos 2 outras situações.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">☀️ Plexo Solar</span><span class="acao-tag acao-tag-chakra">🔵 Laríngeo</span><span class="acao-tag acao-tag-tipo-prescritivo">Prescrição</span></div>
+                        <div class="acao-ferramenta-hint"><div class="acao-ferramenta-hint-icon">💎</div><div class="acao-ferramenta-hint-text"><strong>Capacidade ativada:</strong> Autoconhecimento diagnóstico. Reconhecer o padrão é pré-requisito pra mudar.</div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#F59E0B">6</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Pratique um micro-limite por dia</div>
+                        <div class="acao-desc">Diga "prefiro não" a algo pequeno. Expresse uma opinião diferente. Diga "isso me incomodou" pra algo menor. É exposição progressiva em carga baixa — academia emocional.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">🔵 Laríngeo</span><span class="acao-tag acao-tag-chakra">☀️ Plexo Solar</span><span class="acao-tag acao-tag-tipo-prescritivo">Prescrição</span></div>
+                        <div class="acao-ferramenta-hint"><div class="acao-ferramenta-hint-icon">💎</div><div class="acao-ferramenta-hint-text"><strong>Princípio:</strong> Ajuste de dificuldade — ou aumenta capacidade ou diminui o desafio. Micro-limites são o nível 1 da academia de limites.</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTÍNUO -->
+    <div class="timing-section" style="animation:fadeUp 0.5s ease 0.2s both">
+        <div class="timing-header"><div class="timing-badge timing-continuo">🔵 Contínuo</div><div class="timing-title">Desenvolvimento</div></div>
+        <div class="acao-list">
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#3B82F6">7</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Monitore a velocidade de retorno</div>
+                        <div class="acao-desc">O anel vai abrir de novo — outra situação, outro limite, outra culpa. Evolução não é nunca mais abrir. É fechar mais rápido. Se dessa vez foram 4 dias, a próxima pode ser 2. Isso é progresso real.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">🟣 Coronário</span><span class="acao-tag acao-tag-tipo-capacidade">Capacidade</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#3B82F6">8</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Quando engolir de novo, não se puna — recalibre</div>
+                        <div class="acao-desc">Vai ter vezes que o programa ganha. Silêncio de novo. Isso não é falha — é o processo. A diferença agora é que você sabe o que aconteceu, por que aconteceu, e como agir diferente na próxima.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-chakra">💚 Cardíaco</span><span class="acao-tag acao-tag-tipo-capacidade">Capacidade</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="acao-card">
+                <div class="acao-card-top">
+                    <div class="acao-num" style="background:#3B82F6">9</div>
+                    <div class="acao-content">
+                        <div class="acao-titulo">Expanda para outros chakras quando estabilizar</div>
+                        <div class="acao-desc">Laríngeo e Cardíaco são o foco agora. Quando sentir que o padrão de engolir começou a enfraquecer, o sistema vai mostrar o próximo chakra que precisa de atenção. Cada ciclo abre uma nova camada.</div>
+                        <div class="acao-tags"><span class="acao-tag acao-tag-tipo-capacidade">Progressão</span></div>
+                        <div class="acao-ferramenta-hint"><div class="acao-ferramenta-hint-icon">💎</div><div class="acao-ferramenta-hint-text"><strong>Princípio:</strong> Foco — resolver um chakra de cada vez. Quando treina uma área, as outras também sobem. Mas o foco evita dispersão.</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SE TRAVAR -->
+    <div class="travar-box" style="animation:fadeUp 0.5s ease 0.25s both">
+        <div class="travar-label">⚠️ Sinais de que o programa antigo venceu a rodada</div>
+        <div class="travar-item"><div class="travar-sinal">→</div><div class="travar-text"><strong>Adiamento infinito:</strong> "semana que vem" que nunca chega. Se passou 7 dias, o programa venceu.</div></div>
+        <div class="travar-item"><div class="travar-sinal">→</div><div class="travar-text"><strong>Racionalização:</strong> "não foi tão grave" — a mente reescrevendo a história pra justificar o silêncio.</div></div>
+        <div class="travar-item"><div class="travar-sinal">→</div><div class="travar-text"><strong>Compensação:</strong> ser extra gentil com a mãe pra "compensar" sem resolver a causa.</div></div>
+        <div class="travar-item"><div class="travar-sinal">→</div><div class="travar-text"><strong>Deslocamento:</strong> descontar a raiva em outra pessoa porque não sai pela via certa.</div></div>
+    </div>
+
+    <!-- RESULTADO ESPERADO -->
+    <div class="resultado-box" style="animation:fadeUp 0.5s ease 0.3s both">
+        <div class="resultado-label">✅ Resultado esperado se executar</div>
+        <div class="resultado-grid">
+            <div class="resultado-item"><div class="resultado-check">✓</div><div class="resultado-text">Limite comunicado — relação honesta em vez de paz falsa</div></div>
+            <div class="resultado-item"><div class="resultado-check">✓</div><div class="resultado-text">Emma vê a mãe se posicionar — modelo em vez de discurso</div></div>
+            <div class="resultado-item"><div class="resultado-check">✓</div><div class="resultado-text">Evidência concreta de que falar não destrói</div></div>
+            <div class="resultado-item"><div class="resultado-check">✓</div><div class="resultado-text">Padrão mapeado em outras áreas da vida</div></div>
+            <div class="resultado-item"><div class="resultado-check">✓</div><div class="resultado-text">Músculo de limite sendo construído diariamente</div></div>
+            <div class="resultado-item"><div class="resultado-check">✓</div><div class="resultado-text">Velocidade de retorno acelerando a cada ciclo</div></div>
+        </div>
+    </div>
+
+    <div class="m-footer"><div class="m-footer-mark">✦</div>Jogo da Alma · Ações Recomendadas</div>
+
+</div>
+</div>
+
+<script>
+function switchTab(tab) {
+    document.querySelectorAll('.tab-view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + tab).classList.add('active');
+    document.getElementById('btn-' + tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
