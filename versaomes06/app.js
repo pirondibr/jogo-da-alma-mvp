@@ -874,7 +874,7 @@ class JogoDaAlmaGerador {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + this.apiKey,
                     'HTTP-Referer': window.location.href,
-                    'X-Title': 'Jogo da Alma — Gerador'
+                    'X-Title': 'Jogo da Alma Gerador'
                 },
                 body: JSON.stringify({
                     model: this.model,
