@@ -607,7 +607,7 @@ ESQUELETO (preencha o conteúdo; [colchetes] = preencher; "repita" = gere um por
     </div>
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:32px">
-    <div class="cta-deep" onclick="switchTab('completo')"><div class="cta-deep-icon">📖</div><div class="cta-deep-title">Relatório Completo</div><div class="cta-deep-sub">Análise narrativa com os 4 módulos + Soul HUD</div></div>
+    <div class="cta-deep" onclick="switchTab('completo')"><div class="cta-deep-icon">📖</div><div class="cta-deep-title">Relatório Completo</div><div class="cta-deep-sub">Análise narrativa com os 4 módulos</div></div>
     <div class="cta-deep" onclick="switchTab('lembretes')"><div class="cta-deep-icon">💡</div><div class="cta-deep-title">Lembretes</div><div class="cta-deep-sub">Frases e conceitos pra abrir antes da conversa</div></div>
   </div>
   <div class="m-footer"><div class="m-footer-mark">✦</div>Jogo da Alma · Mapa da Situação</div>
@@ -616,7 +616,7 @@ ESQUELETO (preencha o conteúdo; [colchetes] = preencher; "repita" = gere um por
 
 <div class="tab-view" id="view-completo">
 <div class="full-page">
-  <div class="full-header"><div class="full-header-label">Jogo da Alma 2.0</div><h1>Relatório Completo</h1><div class="full-header-sub">Módulos 1 a 4 + Soul HUD</div></div>
+  <div class="full-header"><div class="full-header-label">Jogo da Alma 2.0</div><h1>Relatório Completo</h1><div class="full-header-sub">Módulos 1 a 4</div></div>
   <div class="caso-box"><div class="label">Caso — [Nome]</div><p>[relato integral da pessoa, em itálico]</p></div>
   <div class="modulo">
     <div class="modulo-header"><div class="modulo-num">1</div><div class="modulo-title">O que está acontecendo com você</div></div>
@@ -650,29 +650,13 @@ ESQUELETO (preencha o conteúdo; [colchetes] = preencher; "repita" = gere um por
     <p><strong>A variável que você não controla:</strong> [...]</p>
     <div class="destaque"><strong>O cruzamento interno/externo:</strong> [...]</div>
   </div>
-  <div class="hud-divider"><span>Soul HUD</span></div>
-  <div class="hud-container">
-    <div class="hud-header"><div class="hud-label">Jogo da Alma</div><div class="hud-title">Soul HUD</div></div>
-    <div class="hud-score"><div class="hud-score-circle">[XX]%</div><div class="hud-score-info"><div class="hud-score-title">Consciência Geral</div><div class="hud-score-sub">[N] chakras ativos · Foco: [Principal]</div><div class="xp-bar"><div class="xp-bar-track"><div class="xp-bar-fill" style="width:[XX]%;background:var(--accent-laringeo)"></div></div><div class="xp-bar-label">[XX]%</div></div></div></div>
-    <div class="hud-lembrete"><div class="lem-label">💡 Lembrete da Mente Nova</div><div class="lem-text">"[frase âncora]"</div></div>
-    <!-- 1 hud-card por chakro ativo (Principal -> Secundário -> Apoio). No Principal use style="border:2px solid rgba(59,130,246,0.2)" com a cor do chakro -->
-    <div class="hud-card" style="border:2px solid rgba(59,130,246,0.2)">
-      <div class="hud-card-header"><div class="hud-card-emoji">🔵</div><div class="hud-card-info"><div class="hud-card-name">[Chakra]</div><div class="hud-card-badges"><span class="hud-badge hud-badge-blocked">Bloqueado</span><span class="hud-badge-role">★ Principal</span></div><div class="xp-bar xp-bar-light" style="margin-top:6px"><div class="xp-bar-track"><div class="xp-bar-fill" style="width:20%;background:var(--accent-laringeo)"></div></div><div class="xp-bar-label" style="color:#9CA3AF">20%</div></div></div></div>
-      <div class="hud-card-body"><div class="hud-card-tema">[Tema]</div><div class="hud-grid">
-        <div class="hud-col-red"><div class="hud-col-label"><span class="dot"></span> Travado agora</div><div class="hud-item hud-item-red">[item curto]</div><!-- 3-4 --></div>
-        <div class="hud-col-green"><div class="hud-col-label"><span class="dot"></span> Para desbloquear</div><div class="hud-item hud-item-green">[capacidade/frase]</div><!-- 3-4 --></div>
-      </div><div class="hud-missao" style="border-color:rgba(59,130,246,0.3);background:rgba(59,130,246,0.04)"><div class="hud-missao-label" style="color:var(--accent-laringeo)">🎯 Missão Ativa</div><div class="hud-missao-text">[ação concreta da semana]</div></div></div>
-    </div>
-    <!-- use hud-badge-excessive para excesso; ajuste emoji, cor da borda e da missão por chakro -->
-    <div class="hud-footer">Jogo da Alma 2.0 · Soul HUD</div>
-  </div>
 </div>
 </div>
 
 <div class="tab-view" id="view-lembretes">
 <div class="lem-page">
   <div class="lem-header"><div class="lem-header-eyebrow">Jogo da Alma</div><h1>Lembretes</h1><div class="lem-header-sub">Frases e conceitos para relembrar quando a situação ativar</div></div>
-  <div class="lem-central"><div class="lem-central-icon">💡</div><div class="lem-central-frase">"[frase âncora da Mente Nova — a mesma do HUD]"</div><div class="lem-central-sub">[quando usar]</div></div>
+  <div class="lem-central"><div class="lem-central-icon">💡</div><div class="lem-central-frase">"[frase âncora da Mente Nova]"</div><div class="lem-central-sub">[quando usar]</div></div>
   <div class="lem-section" style="animation:fadeUp 0.5s ease 0.1s both">
     <div class="lem-section-label">🔑 Uma frase por chakra</div>
     <div class="frase-list">
@@ -748,7 +732,7 @@ const LOADING_MESSAGES = [
     "Formulando a intenção positiva do padrão...",
     "Preparando a prescrição e os scripts...",
     "Separando o que você controla do que não...",
-    "Montando o Soul HUD e as ações...",
+    "Montando os lembretes e as ações...",
     "Finalizando suas 4 abas..."
 ];
 
