@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chakra — Triângulos Sobrepostos — Antes & Depois</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg:#F7F6F3; --card:#FFFFFF;
+    --text:#1A1A1A; --text2:#3D3D3D; --text3:#6B6B6B; --text-muted:#9A9A9A;
+    --border:#E8E6E1; --border-light:#F0EFEB;
+    --accent:#C9A84C; --accent-soft:rgba(201,168,76,0.08); --accent-border:rgba(201,168,76,0.25);
+    --green-bg:#F0FDF4; --green-border:#BBF7D0; --green-muted:#047857;
+    --cardiaco:#4CAF82; --falta-st:#E0A23C;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; -webkit-font-smoothing:antialiased; }
+.page { max-width:680px; margin:0 auto; padding:40px 20px 80px; }
+
+.g-header { text-align:center; margin-bottom:18px; animation:fadeUp .5s ease both; }
+.zoom-tag { display:inline-block; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); background:var(--card); border:1px solid var(--accent-border); padding:3px 10px; border-radius:6px; margin-bottom:12px; }
+.g-header h1 { font-family:'Fraunces',serif; font-size:26px; font-weight:600; line-height:1.2; margin-bottom:6px; }
+.g-header h1 .chakra { color:var(--cardiaco); }
+.g-header-sub { font-size:13px; color:var(--text-muted); max-width:490px; margin:0 auto; }
+
+.situacao { background:var(--text); color:#F5F5F0; border-radius:16px; padding:16px 22px; margin-bottom:18px; animation:fadeUp .5s ease .05s both; }
+.situacao-label { font-size:9px; font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:rgba(255,255,255,.4); margin-bottom:6px; }
+.situacao-text { font-size:13px; line-height:1.65; color:rgba(255,255,255,.82); font-style:italic; }
+
+.legend-row { display:flex; flex-wrap:wrap; gap:14px 18px; justify-content:center; margin-bottom:18px; }
+.legend-item { display:flex; align-items:center; gap:7px; font-size:11px; font-weight:600; color:var(--text3); }
+.legend-glyph { font-size:14px; line-height:1; }
+
+.tri-block { background:var(--card); border:1px solid var(--border); border-radius:18px; overflow:hidden; margin-bottom:20px; animation:fadeUp .5s ease .1s both; }
+.tb-antes { border-color:var(--falta-st); }
+.tb-depois { border-color:var(--green-border); }
+.tri-top { padding:18px 24px 0; text-align:center; }
+.tri-eyebrow { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; margin-bottom:5px; }
+.eb-antes { color:#9A6313; } .eb-depois { color:var(--green-muted); }
+.tri-title { font-family:'Fraunces',serif; font-size:19px; font-weight:600; }
+.svg-wrap { padding:4px 8px 0; }
+.tri-canvas { width:100%; height:auto; display:block; }
+
+.note { display:flex; align-items:flex-start; gap:11px; margin:2px 22px 18px; padding:13px 16px; border-radius:12px; font-size:12.5px; line-height:1.55; }
+.note-icon { font-size:15px; flex-shrink:0; }
+.fn-antes { background:#FBEAD2; border:1px solid var(--falta-st); color:#7A4E10; }
+.fn-depois { background:var(--green-bg); border:1px solid var(--green-border); color:var(--text2); }
+.note b { color:var(--text); }
+
+.g-footer { text-align:center; padding:24px 0 6px; font-size:11px; color:var(--text-muted); }
+.g-footer-mark { font-size:16px; color:var(--accent); margin-bottom:4px; }
+
+@keyframes fadeUp { from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);} }
+.tri-sit  { animation:fadeUp .7s ease .3s both; }
+.tri-ind  { animation:fadeUp .7s ease .5s both; }
+.fld      { animation:fadeUp .9s ease .7s both; }
+.ax       { animation:fadeUp .6s ease .55s both; }
+@media print { body{padding:0;} }
+</style>
+</head>
+<body>
+<div class="page">
+
+    <div class="g-header">
+        <div class="zoom-tag">Fórmula Rafael · zoom Específico</div>
+        <h1>Chakra <span class="chakra">Cardíaco</span> — os dois triângulos</h1>
+        <div class="g-header-sub">Um triângulo é o que a situação pede neste chakra; o outro é o que a Anna fez. Encaixe simétrico = bateu. Encaixe torto = não bateu.</div>
+    </div>
+
+    <div class="situacao">
+        <div class="situacao-label">Situação — Anna · recorte do Cardíaco</div>
+        <div class="situacao-text">A mãe atacou a escolha da Emma. A Anna engole, some pra não magoar — amor virou anulação.</div>
+    </div>
+
+    <div class="legend-row">
+        <div class="legend-item"><span class="legend-glyph" style="color:#C9A84C">▼</span> Situação — o que pede neste chakra</div>
+        <div class="legend-item"><span class="legend-glyph" style="color:#4CAF82">▲</span> Indivíduo — o que a Anna fez</div>
+    </div>
+
+    <!-- ═══════════ ANTES ═══════════ -->
+    <div class="tri-block tb-antes">
+        <div class="tri-top">
+            <div class="tri-eyebrow eb-antes">Antes · encaixe torto</div>
+            <div class="tri-title">O que a Anna fez ficou deslocado do que a situação pedia</div>
+        </div>
+        <div class="svg-wrap">
+        <svg class="tri-canvas" viewBox="0 0 600 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Antes: triângulo da situação centrado no proporcional e triângulo do indivíduo deslocado para o excesso, formando uma estrela assimétrica">
+
+            <!-- SITUAÇÃO ▼ centrada em 6 -->
+            <polygon class="tri-sit" points="330.0,282.0 401.0,159.0 259.0,159.0" fill="rgba(201,168,76,0.14)" stroke="#C9A84C" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- INDIVÍDUO ▲ deslocado pra 9 -->
+            <polygon class="tri-ind" points="420.0,118.0 349.0,241.0 491.0,241.0" fill="rgba(76,175,130,0.12)" stroke="#4CAF82" stroke-width="2.5" stroke-dasharray="7 5" stroke-linejoin="round"/>
+
+            <text class="tri-ind" x="420" y="104" text-anchor="middle" font-family="DM Sans" font-size="10" font-weight="700" fill="#A33327">INDIVÍDUO fez · 9</text>
+            <text class="tri-sit" x="285" y="300" text-anchor="middle" font-family="DM Sans" font-size="10" font-weight="700" fill="#7A6320">SITUAÇÃO pede · 6</text>
+
+            <!-- eixo falta-excesso -->
+            <g class="ax">
+                <rect x="150" y="332" width="105" height="10" fill="#FBEAD2"/>
+                <rect x="255" y="332" width="105" height="10" fill="#E4F4EA"/>
+                <rect x="360" y="332" width="90"  height="10" fill="#FBE0DD"/>
+                <line x1="150" y1="330" x2="450" y2="330" stroke="#C9C2B4" stroke-width="1.3"/>
+                <text x="150" y="364" text-anchor="middle" font-family="DM Sans" font-size="8.5" font-weight="700" fill="#9A6313">Falta · Frieza</text>
+                <text x="450" y="364" text-anchor="middle" font-family="DM Sans" font-size="8.5" font-weight="700" fill="#A33327">Excesso · Anulação</text>
+                <!-- tick situação 6 -->
+                <line x1="330" y1="326" x2="330" y2="346" stroke="#C9A84C" stroke-width="2.5"/>
+                <text x="330" y="360" text-anchor="middle" font-family="Fraunces" font-size="10" font-weight="700" fill="#93791F">6</text>
+                <!-- tick indivíduo 9 -->
+                <line x1="420" y1="326" x2="420" y2="346" stroke="#A33327" stroke-width="2.5"/>
+                <text x="420" y="360" text-anchor="middle" font-family="Fraunces" font-size="10" font-weight="700" fill="#A33327">9</text>
+                <!-- gap -->
+                <line x1="337" y1="378" x2="413" y2="378" stroke="#B07A2A" stroke-width="1.5"/>
+                <polygon points="420,378 410,374 410,382" fill="#B07A2A"/>
+                <polygon points="330,378 340,374 340,382" fill="#B07A2A"/>
+                <text x="375" y="375" text-anchor="middle" font-family="DM Sans" font-size="8.5" font-weight="700" fill="#9A6313">desalinhado · 3</text>
+            </g>
+        </svg>
+        </div>
+        <div class="note fn-antes">
+            <span class="note-icon">⚠️</span>
+            <div>Os dois triângulos não se encaixam: o da Anna escorregou pro <b>excesso</b> (9, anulação), longe do <b>6</b> que a situação pedia. A estrela sai <b>torta</b> — sobreposição parcial, deslocada. O desalinhamento é a medida do erro.</div>
+        </div>
+    </div>
+
+    <!-- ═══════════ DEPOIS ═══════════ -->
+    <div class="tri-block tb-depois">
+        <div class="tri-top">
+            <div class="tri-eyebrow eb-depois">Depois · encaixe simétrico</div>
+            <div class="tri-title">O que a Anna fez coincide com o que a situação pede</div>
+        </div>
+        <div class="svg-wrap">
+        <svg class="tri-canvas" viewBox="0 0 600 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Depois: os dois triângulos centrados no mesmo ponto formam uma estrela simétrica com campo no centro">
+
+            <!-- glow -->
+            <polygon class="fld" points="385.9,200.0 357.9,151.6 302.1,151.6 274.1,200.0 302.1,248.4 357.9,248.4" fill="#FBF6E6" opacity="0.55"/>
+            <!-- SITUAÇÃO ▼ -->
+            <polygon class="tri-sit" points="330.0,282.0 401.0,159.0 259.0,159.0" fill="rgba(201,168,76,0.14)" stroke="#C9A84C" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- INDIVÍDUO ▲ centrado em 6 -->
+            <polygon class="tri-ind" points="330.0,118.0 259.0,241.0 401.0,241.0" fill="rgba(76,175,130,0.14)" stroke="#4CAF82" stroke-width="2.5" stroke-linejoin="round"/>
+            <!-- campo central -->
+            <polygon class="fld" points="377.3,200.0 353.7,159.0 306.3,159.0 282.7,200.0 306.3,241.0 353.7,241.0" fill="#FFFDF8" stroke="#ECE1BE" stroke-width="1.3"/>
+            <text class="fld" x="330" y="204" text-anchor="middle" font-size="12" fill="#C9B36A">✦</text>
+
+            <text class="tri-ind" x="330" y="104" text-anchor="middle" font-family="DM Sans" font-size="10" font-weight="700" fill="#2F7A52">INDIVÍDUO fez · 6</text>
+            <text class="tri-sit" x="330" y="300" text-anchor="middle" font-family="DM Sans" font-size="10" font-weight="700" fill="#7A6320">SITUAÇÃO pede · 6</text>
+
+            <!-- eixo -->
+            <g class="ax">
+                <rect x="150" y="332" width="105" height="10" fill="#FBEAD2"/>
+                <rect x="255" y="332" width="105" height="10" fill="#E4F4EA"/>
+                <rect x="360" y="332" width="90"  height="10" fill="#FBE0DD"/>
+                <line x1="150" y1="330" x2="450" y2="330" stroke="#C9C2B4" stroke-width="1.3"/>
+                <text x="150" y="364" text-anchor="middle" font-family="DM Sans" font-size="8.5" font-weight="700" fill="#9A6313">Falta · Frieza</text>
+                <text x="450" y="364" text-anchor="middle" font-family="DM Sans" font-size="8.5" font-weight="700" fill="#A33327">Excesso · Anulação</text>
+                <!-- ticks coincidentes em 6 -->
+                <line x1="330" y1="324" x2="330" y2="348" stroke="#7A9E5C" stroke-width="3"/>
+                <text x="330" y="362" text-anchor="middle" font-family="Fraunces" font-size="10" font-weight="700" fill="#2F7A52">6 · alinhados</text>
+            </g>
+        </svg>
+        </div>
+        <div class="note fn-depois">
+            <span class="note-icon">✦</span>
+            <div>A Anna recuou pro <b>6</b>: ama a mãe sem se anular. Os dois triângulos centram no mesmo ponto e formam a <b>estrela simétrica</b> — o campo acende no meio. O que ela fez bate com o que a situação pedia. (E se outra situação pedir um proporcional diferente, o triângulo dourado desloca e a estrela se refaz.)</div>
+        </div>
+    </div>
+
+    <div class="g-footer">
+        <div class="g-footer-mark">✦</div>
+        Jogo da Alma · Chakra · Triângulos Sobrepostos
+    </div>
+
+</div>
+</body>
+</html>
