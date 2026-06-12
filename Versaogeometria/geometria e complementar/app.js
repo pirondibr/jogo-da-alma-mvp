@@ -309,6 +309,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);lin
 .nd-sub2{font-size:10.5px;color:var(--text-muted);font-weight:500}
 .nd-text{font-size:12.5px;line-height:1.55;color:var(--text2)}
 .nd-text b{color:var(--text)}
+.nd-phrase{display:flex;align-items:flex-start;gap:8px;margin-top:8px;padding:9px 13px;background:var(--bg);border-left:2.5px solid var(--accent);border-radius:0 10px 10px 0;font-family:'Fraunces',serif;font-size:12.5px;font-style:italic;line-height:1.45;color:var(--text)}
+.nd-phrase-glyph{font-family:'DM Sans',sans-serif;font-style:normal;font-size:13px;line-height:1.45;flex-shrink:0}
+.nd-phrase b{font-style:normal;font-weight:600}
 .nd-interp{background:var(--green-bg);border:1px solid var(--green-border);border-radius:14px;padding:14px 18px;margin-bottom:18px;font-size:12.5px;line-height:1.6;color:var(--text2)}
 .nd-interp b{color:var(--green-muted)}
 .nd-actions{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px 22px;margin-bottom:20px}
@@ -533,15 +536,23 @@ function buildPonteNaoDualBody(data, nome) {
     const novaInterp = escapeHtmlLight(p.nova_interpretacao || '');
     const fraseFinal = escapeHtmlLight(p.frase_integracao || 'Eu não deixo de ser quem sou para integrar. Eu descubro o resto de mim dentro da minha própria linguagem.');
 
-    // pontes: todos os chakras menos o central, na ordem de exibição
+    // pontes: todos os chakras menos o central, na ordem de exibição.
+    // cada ponte pode ser uma string (formato antigo) ou {texto, frase}.
     const pontes = p.pontes || {};
     const bridgeItems = CHAKRA_DISPLAY.filter(k => k !== centralKey).map(k => {
         const c = CHAKRAS[k];
-        const txt = pontes[k];
-        if (!txt) return '';
+        const raw = pontes[k];
+        if (!raw) return '';
+        const texto = typeof raw === 'string' ? raw : (raw.texto || '');
+        const frase = typeof raw === 'string' ? '' : (raw.frase || '');
+        if (!texto && !frase) return '';
+        const fraseHtml = frase
+            ? `<div class="nd-phrase" style="border-color:${c.color}"><span class="nd-phrase-glyph" style="color:${c.color}">∞</span><span>${escapeHtmlLight(frase)}</span></div>`
+            : '';
         return `<div class="nd-item">
   <div class="nd-head"><span class="nd-dot" style="background:${c.color}"></span><span class="nd-name">${c.nome}</span><span class="nd-sub2">${c.sub}</span></div>
-  <div class="nd-text">${escapeHtmlLight(txt)}</div>
+  <div class="nd-text">${escapeHtmlLight(texto)}</div>
+  ${fraseHtml}
 </div>`;
     }).filter(Boolean).join('\n');
 
@@ -702,13 +713,13 @@ Responda **APENAS com um objeto JSON válido**, sem markdown, sem cercas de cód
     "diagnostico": "1–2 frases: o conflito — o que a situação pede vs. a energia natural da pessoa. Pode usar <b>.",
     "ponte_principal": "A frase-ponte central, no formato 'A melhor forma de [energia dominante] não é [armadilha]. É incluir [chakra que falta].' Pode usar <b>.",
     "pontes": {
-      "raiz":      "Tradução não-dual da raiz pela linguagem do chakra central, contextualizada ao relato.",
-      "sacral":    "...",
-      "plexo":     "...",
-      "cardiaco":  "...",
-      "laringeo":  "...",
-      "frontal":   "...",
-      "coronario": "..."
+      "raiz":      {"texto": "Tradução não-dual da raiz pela linguagem do chakra central, contextualizada ao relato.", "frase": "Frase curta de não-dualidade: como os DOIS chakras se ajudam mutuamente."},
+      "sacral":    {"texto": "...", "frase": "..."},
+      "plexo":     {"texto": "...", "frase": "..."},
+      "cardiaco":  {"texto": "...", "frase": "..."},
+      "laringeo":  {"texto": "...", "frase": "..."},
+      "frontal":   {"texto": "...", "frase": "..."},
+      "coronario": {"texto": "...", "frase": "..."}
     },
     "nova_interpretacao": "1–2 frases mostrando como a pessoa pode reenxergar a situação SEM abandonar quem ela é. Pode usar <b>.",
     "acoes": ["Ação prática 1 (concreta e simples).", "Ação prática 2.", "Ação prática 3."],
@@ -716,7 +727,10 @@ Responda **APENAS com um objeto JSON válido**, sem markdown, sem cercas de cód
   }
 }
 
-No objeto "pontes", inclua os 7 chakras MENOS o chakra_central (6 entradas). Cada ponte traduz a verdade daquele chakra para a linguagem do central, ancorada na situação relatada — priorize traduzir os chakras que estão em FALTA e que a situação pede. "chakra_central" deve ser uma das chaves: raiz, sacral, plexo, cardiaco, laringeo, frontal, coronario.
+No objeto "pontes", inclua os 7 chakras MENOS o chakra_central (6 entradas). Cada ponte tem dois campos:
+- **"texto"**: 1–2 frases traduzindo a verdade daquele chakra para a linguagem do central, ancorada na situação relatada — priorize os chakras em FALTA que a situação pede.
+- **"frase"**: 1 frase curta, de impacto, que captura a NÃO-DUALIDADE entre os dois chakras — como o chakra central e aquele chakra se **ajudam mutuamente** (mão dupla), em vez de competirem. Não é só "preciso de mais X"; mostre o ganho recíproco. Padrões úteis: "Quanto mais [A], mais [B]; quanto mais [B], mais verdadeiro fica [A]." ou "[A] sem [B] vira [armadilha]; [B] sem [A] vira [armadilha] — juntos viram [integração]." Mantenha viva, concreta e ligada ao caso.
+"chakra_central" deve ser uma das chaves: raiz, sacral, plexo, cardiaco, laringeo, frontal, coronario.
 
 Para CADA um dos 7 chakras, além dos níveis, preencha:
 - **"fez"**: 1 frase descrevendo concretamente o que a pessoa fez nesse chakra nesta situação e por que é falta, proporcional ou excesso (compare antes vs sit). Se já estava na medida, diga que ali ela acertou.
@@ -886,7 +900,7 @@ class JogoDaAlmaGerador {
                     { role: 'user', content: userMsg }
                 ],
                 temperature: 0.7,
-                max_tokens: 6000,
+                max_tokens: 7500,
                 stream: true
             })
         });
