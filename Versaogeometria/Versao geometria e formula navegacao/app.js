@@ -805,6 +805,7 @@ class GpsDaAlma {
         this.ondeInput = this.$('ondeInput');
         this.continentChips = this.$('continentChips');
         this.nativeChips = this.$('nativeChips');
+        this.modeChooser = this.$('modeChooser');
         this.modeToggle = this.$('modeToggle');
         this.modeDesc = this.$('modeDesc');
         this.continentBlock = this.$('continentBlock');
@@ -873,6 +874,9 @@ class GpsDaAlma {
         this.modeToggle.querySelectorAll('.mode-btn').forEach(btn => {
             btn.addEventListener('click', () => this.setMode(btn.dataset.mode));
         });
+        this.modeChooser.querySelectorAll('.chooser-card').forEach(card => {
+            card.addEventListener('click', () => this.chooseMode(card.dataset.mode));
+        });
         this.generateBtn.addEventListener('click', () => this.handleGenerateMaps());
         this.remapBtn.addEventListener('click', () => this.handleGenerateMaps());
         this.downloadHtmlBtn.addEventListener('click', () => this.downloadHTML());
@@ -896,8 +900,17 @@ class GpsDaAlma {
     }
 
     focusPrimaryField() {
+        if (this.inputCard.classList.contains('hidden')) return;
         if (this.mode === 'situacao') this.ondeInput.focus();
         else this.destinoInput.focus();
+    }
+
+    /* Escolha inicial da porta de entrada: revela o formulário no modo escolhido. */
+    chooseMode(mode) {
+        this.setMode(mode);
+        this.modeChooser.classList.add('hidden');
+        this.inputCard.classList.remove('hidden');
+        setTimeout(() => this.focusPrimaryField(), 250);
     }
 
     setMode(mode) {
@@ -1522,8 +1535,9 @@ ${JSON.stringify(ctx, null, 1)}`;
         this.chatHistory = [];
         this.chatMessages.innerHTML = '';
         this.chatSuggest.innerHTML = '';
+        this.inputCard.classList.add('hidden');
+        this.modeChooser.classList.remove('hidden');
         document.getElementById('ferramenta').scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => this.focusPrimaryField(), 500);
     }
 
     showError(html) {

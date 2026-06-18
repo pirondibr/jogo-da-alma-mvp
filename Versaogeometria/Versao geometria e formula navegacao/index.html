@@ -370,6 +370,28 @@
         .mode-btn svg { width: 16px; height: 16px; }
         .mode-desc { font-size: 0.86rem; color: var(--text3); margin-top: 0.7rem; line-height: 1.5; }
         .field-block.hidden { display: none; }
+        .input-card.hidden, .mode-chooser.hidden { display: none; }
+
+        /* tela de escolha da porta de entrada */
+        .mode-chooser { margin-bottom: 0.5rem; animation: cardIn 0.45s ease both; }
+        .chooser-head { text-align: center; max-width: 580px; margin: 0 auto 1.6rem; }
+        .chooser-head h3 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(1.5rem, 3.4vw, 2rem); font-weight: 600; line-height: 1.2; margin-bottom: 0.5rem; }
+        .chooser-head p { color: var(--text2); font-size: 0.98rem; }
+        .chooser-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+        .chooser-card { text-align: left; background: var(--bg); border: 1.5px solid var(--border); border-radius: 18px; padding: 1.7rem 1.6rem; cursor: pointer; transition: all 0.22s ease; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; gap: 0.45rem; position: relative; overflow: hidden; }
+        .chooser-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--indigo), var(--gold)); opacity: 0; transition: opacity 0.22s ease; }
+        .chooser-card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(31,41,55,0.10); border-color: var(--text-muted); }
+        .chooser-card:hover::before { opacity: 1; }
+        .chooser-ic { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--indigo-soft); color: var(--indigo); margin-bottom: 0.3rem; }
+        .chooser-card.alvo .chooser-ic { background: var(--gold-soft); color: #8A6D1E; }
+        .chooser-ic svg { width: 24px; height: 24px; }
+        .chooser-card h4 { font-family: 'Fraunces', Georgia, serif; font-size: 1.2rem; font-weight: 600; }
+        .chooser-card p { font-size: 0.92rem; color: var(--text2); line-height: 1.55; }
+        .chooser-eg { font-size: 0.84rem; color: var(--text3); font-style: italic; margin-top: 0.2rem; }
+        .chooser-go { margin-top: 0.6rem; display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; color: var(--indigo); }
+        .chooser-card.alvo .chooser-go { color: #8A6D1E; }
+        .chooser-go svg { width: 15px; height: 15px; }
+        @media (max-width: 640px) { .chooser-cards { grid-template-columns: 1fr; } }
 
         .input-footer {
             display: flex;
@@ -775,12 +797,36 @@
             </p>
         </div>
 
+        <!-- ESCOLHA DA PORTA DE ENTRADA -->
+        <div class="mode-chooser" id="modeChooser">
+            <div class="chooser-head">
+                <h3>Como você quer começar?</h3>
+                <p>Existem duas portas de entrada. Escolha a que combina com como você chegou agora.</p>
+            </div>
+            <div class="chooser-cards">
+                <button type="button" class="chooser-card situacao" data-mode="situacao">
+                    <span class="chooser-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+                    <h4>Partir de uma Situação</h4>
+                    <p>Você traz uma cena ou um incômodo concreto — sem precisar de um objetivo. A IA revela os caminhos e os alvos possíveis.</p>
+                    <span class="chooser-eg">Ex: "minha mãe ofendeu minha filha e eu travei"</span>
+                    <span class="chooser-go">Começar pela situação <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </button>
+                <button type="button" class="chooser-card alvo" data-mode="alvo">
+                    <span class="chooser-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg></span>
+                    <h4>Partir de um Alvo</h4>
+                    <p>Você já sabe aonde quer chegar. A IA localiza onde você está e desenha as rotas possíveis até lá.</p>
+                    <span class="chooser-eg">Ex: "quero colocar limites sem brigar"</span>
+                    <span class="chooser-go">Começar pelo alvo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                </button>
+            </div>
+        </div>
+
         <!-- INPUT -->
-        <div class="input-card" id="inputCard">
+        <div class="input-card hidden" id="inputCard">
 
             <div class="field-block">
-                <div class="field-label">Por onde você quer começar?</div>
-                <div class="field-hint">Duas portas de entrada — escolha a que combina com como você chegou.</div>
+                <div class="field-label">Porta de entrada</div>
+                <div class="field-hint">Você pode trocar quando quiser.</div>
                 <div class="mode-toggle" id="modeToggle">
                     <button type="button" class="mode-btn active" data-mode="situacao">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
