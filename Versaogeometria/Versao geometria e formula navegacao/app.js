@@ -555,6 +555,28 @@ function escapeHtmlLight(s) {
     return t;
 }
 
+/* Markdown leve para as bolhas do chat: **negrito**, *itálico*, listas com - e parágrafos. */
+function renderChatMarkdown(raw) {
+    let t = String(raw == null ? '' : raw)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    t = t.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/__([^_]+)__/g, '<b>$1</b>');
+    t = t.replace(/(^|[\s(])\*([^*\n]+)\*(?=[\s).,!?:;]|$)/g, '$1<i>$2</i>');
+    const lines = t.split('\n');
+    let html = '', inList = false;
+    for (const line of lines) {
+        const m = line.match(/^\s*[-•]\s+(.*)$/);
+        if (m) {
+            if (!inList) { html += '<ul>'; inList = true; }
+            html += '<li>' + m[1] + '</li>';
+        } else {
+            if (inList) { html += '</ul>'; inList = false; }
+            if (line.trim() !== '') html += '<p>' + line + '</p>';
+        }
+    }
+    if (inList) html += '</ul>';
+    return html || '<p></p>';
+}
+
 /* =========================================================================
    SYSTEM PROMPT 1 — GERADOR DE MAPAS (Ressonância)
    ========================================================================= */
@@ -750,6 +772,9 @@ class GpsDaAlma {
         this.mapsData = null;
         this.selectedMap = null;
         this.lastDoc = '';
+        this.lastData = null;
+        this.chatHistory = [];
+        this.chatStreaming = false;
         this.loadingTimer = null;
         this.loadingIdx = 0;
         this.cacheEls();
@@ -788,6 +813,11 @@ class GpsDaAlma {
         this.backToMapsBtn = this.$('backToMapsBtn');
         this.newAnalysisBtn = this.$('newAnalysisBtn');
         this.inputCard = this.$('inputCard');
+        this.chatSection = this.$('chatSection');
+        this.chatMessages = this.$('chatMessages');
+        this.chatSuggest = this.$('chatSuggest');
+        this.chatInput = this.$('chatInput');
+        this.chatSend = this.$('chatSend');
     }
 
     renderChips() {
@@ -829,6 +859,15 @@ class GpsDaAlma {
         this.openTabBtn.addEventListener('click', () => this.openInNewTab());
         this.backToMapsBtn.addEventListener('click', () => this.backToMaps());
         this.newAnalysisBtn.addEventListener('click', () => this.resetForm());
+
+        this.chatSend.addEventListener('click', () => this.sendChat());
+        this.chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.sendChat(); }
+        });
+        this.chatInput.addEventListener('input', () => {
+            this.chatInput.style.height = 'auto';
+            this.chatInput.style.height = Math.min(this.chatInput.scrollHeight, 150) + 'px';
+        });
     }
 
     hydrateSettings() {
@@ -1043,7 +1082,9 @@ class GpsDaAlma {
             if (!data.navegacao.casa) data.navegacao.casa = mp.casa;
             const doc = buildReportDocument(data);
             this.lastDoc = doc;
+            this.lastData = data;
             this.renderResult(doc);
+            this.initChat(data);
         } catch (err) {
             console.error(err);
             this.showError('Erro ao gerar a geometria: ' + (err?.message || err) + '<br><br>Tente novamente ou escolha outro mapa.');
@@ -1164,6 +1205,197 @@ class GpsDaAlma {
         }, 150);
     }
 
+    /* -------------------- CHAT sobre o resultado -------------------- */
+    initChat(data) {
+        this.chatHistory = [];
+        this.chatMessages.innerHTML = '';
+        const nome = data.nome || 'você';
+        const mKey = (data.mergulho && CHAKRAS[data.mergulho.chakra]) ? data.mergulho.chakra : 'cardiaco';
+        const vertice = CHAKRAS[mKey].nome;
+
+        const welcome = `Pronto, ${nome}. Sua geometria mostra o <b>${vertice}</b> como vértice-chave — o ponto onde o menor movimento reorganiza o resto. Pode me perguntar o que quiser: por que esse é o ponto, qual o primeiro passo, como agir sem se anular, ou peça um exemplo de fala.`;
+        this.appendChat('ai', welcome, true);
+        this.chatHistory.push({ role: 'assistant', content: `Pronto, ${nome}. Sua geometria mostra o ${vertice} como vértice-chave — o ponto onde o menor movimento reorganiza o resto. Pode me perguntar o que quiser.` });
+
+        this.renderChatSuggestions(data, vertice);
+        this.chatInput.value = '';
+        this.chatInput.style.height = 'auto';
+    }
+
+    renderChatSuggestions(data, vertice) {
+        const sugestoes = [
+            `Por que o ${vertice} é o vértice-chave?`,
+            'Qual é o primeiro passo prático?',
+            'Como faço isso sem me anular?',
+            'Me dá um exemplo de fala pra essa situação?',
+            'O que muda se eu não me mover?'
+        ];
+        this.chatSuggest.innerHTML = sugestoes.map(s =>
+            `<button type="button" class="chat-chip">${escapeHtmlSafe(s)}</button>`
+        ).join('');
+        this.chatSuggest.querySelectorAll('.chat-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                if (this.chatStreaming) return;
+                this.chatInput.value = chip.textContent;
+                this.sendChat();
+            });
+        });
+    }
+
+    appendChat(role, html, isHtml) {
+        const wrap = document.createElement('div');
+        wrap.className = `chat-msg ${role === 'user' ? 'user' : 'ai'}`;
+        const avatar = document.createElement('div');
+        avatar.className = `chat-avatar ${role === 'user' ? 'me' : 'ai'}`;
+        avatar.textContent = role === 'user' ? 'Eu' : '✦';
+        const bubble = document.createElement('div');
+        bubble.className = 'chat-bubble';
+        bubble.innerHTML = isHtml ? html : renderChatMarkdown(html);
+        wrap.appendChild(avatar);
+        wrap.appendChild(bubble);
+        this.chatMessages.appendChild(wrap);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        return bubble;
+    }
+
+    async sendChat() {
+        if (this.chatStreaming) return;
+        const text = this.chatInput.value.trim();
+        if (!text) return;
+        if (!this.apiKey) {
+            this.appendChat('ai', 'Preciso da sua chave de API (na engrenagem ⚙️) para conversar.', false);
+            return;
+        }
+
+        this.appendChat('user', text, false);
+        this.chatHistory.push({ role: 'user', content: text });
+        this.chatInput.value = '';
+        this.chatInput.style.height = 'auto';
+
+        this.chatStreaming = true;
+        this.chatSend.disabled = true;
+        const bubble = this.appendChat('ai', '', true);
+        bubble.classList.add('streaming');
+
+        try {
+            const messages = [
+                { role: 'system', content: this.buildChatSystemPrompt(this.lastData) },
+                ...this.chatHistory
+            ];
+            let acc = '';
+            const full = await this.streamChat(messages, (delta) => {
+                acc += delta;
+                bubble.innerHTML = renderChatMarkdown(acc);
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            });
+            bubble.classList.remove('streaming');
+            bubble.innerHTML = renderChatMarkdown(full || acc);
+            this.chatHistory.push({ role: 'assistant', content: full || acc });
+        } catch (err) {
+            console.error(err);
+            bubble.classList.remove('streaming');
+            bubble.innerHTML = renderChatMarkdown('Tive um problema pra responder agora: ' + (err?.message || err) + '\n\nTente de novo em instantes.');
+        } finally {
+            this.chatStreaming = false;
+            this.chatSend.disabled = false;
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }
+    }
+
+    buildChatSystemPrompt(data) {
+        const ctx = {
+            nome: data?.nome || '',
+            continente: this.mapsData?.continente || this.continente || '',
+            alvo: data?.navegacao?.alvo || this.mapsData?.alvo || this.destinoInput.value.trim(),
+            onde_esta: this.ondeInput.value.trim(),
+            idioma_nativo: this.idiomaNativo || '',
+            mapa_escolhido: this.selectedMap ? {
+                titulo: this.selectedMap.titulo,
+                chakra: this.selectedMap.chakra,
+                tema: this.selectedMap.tema,
+                elemento: this.selectedMap.elemento,
+                casa: this.selectedMap.casa,
+                dualidade: this.selectedMap.dualidade
+            } : null,
+            analise: data
+        };
+        return `Você é o companheiro de conversa do **Jogo da Alma**. A pessoa acabou de receber uma análise geométrica da situação dela e agora quer APROFUNDAR e TIRAR DÚVIDAS. Responda às perguntas dela com base no contexto da análise abaixo.
+
+## COMO RESPONDER
+- Português do Brasil, acolhedor e preciso, sem misticismo nem jargão esotérico. Use o nome da pessoa.
+- Respostas CURTAS e diretas (2 a 4 parágrafos curtos no máximo, ou uma lista enxuta). Não repita o relatório inteiro — responda exatamente o que foi perguntado.
+- Use **negrito** com moderação para destacar o essencial. Pode usar listas com "-".
+- Verbos de movimento ("recuar", "sustentar", "subir", "encaixar"), nunca "resolver".
+- Quando fizer sentido, faça UMA pergunta de volta para a pessoa ressoar e se aprofundar — você é um navegador, não um oráculo.
+
+## PRINCÍPIOS QUE NÃO PODEM QUEBRAR
+- O objetivo nunca é "mais". É **proporcional à situação**. A solução é sempre o proporcional, nunca um polo (nem falta, nem excesso).
+- O "proporcional" se move conforme a situação; um número sozinho não diz nada — leia sempre contra o que a situação pede.
+- **Integração não é fusão**: encaixar não é virar o que o outro quer nem se anular.
+- **Anel aberto**: o "depois" não é permanente; a próxima situação reabre o jogo.
+- **Só o indivíduo é medido** — nunca diagnostique o outro envolvido.
+- **Vértice-chave**: o ponto onde o menor movimento gera a maior mudança.
+- **Idioma nativo (Lei Não-Dual)**: se a pessoa tem um chakra dominante, ela acessa os outros através dele — não peça pra ela virar outra pessoa; mostre como o que falta já vive dentro do que ela é.
+- Não invente números novos que contradigam a análise. Se a pessoa pedir algo fora do escopo, pode responder com bom senso mantendo o método.
+
+## OS 7 CHAKRAS (referência)
+raiz=segurança/estrutura · sacral=vitalidade/criatividade · plexo=poder/posição · cardiaco=amor/conexão · laringeo=voz/verdade · frontal=discernimento/clareza · coronario=propósito/sentido. Em cada um: falta (de menos), proporcional (na medida) ou excesso (de mais).
+
+## CONTEXTO DA ANÁLISE (use isto como base de tudo)
+${JSON.stringify(ctx, null, 1)}`;
+    }
+
+    async streamChat(messages, onDelta) {
+        const resp = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.apiKey}`,
+                'Content-Type': 'application/json',
+                'HTTP-Referer': location.origin,
+                'X-Title': 'Jogo da Alma GPS Chat'
+            },
+            body: JSON.stringify({
+                model: this.model,
+                messages,
+                temperature: 0.7,
+                max_tokens: 1400,
+                stream: true
+            })
+        });
+
+        if (!resp.ok) {
+            let detail = '';
+            try { const j = await resp.json(); detail = j?.error?.message || JSON.stringify(j); }
+            catch { detail = await resp.text().catch(() => ''); }
+            throw new Error(`${resp.status} ${resp.statusText}${detail ? ' — ' + detail : ''}`);
+        }
+
+        const reader = resp.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let full = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop();
+            for (const line of lines) {
+                const t = line.trim();
+                if (!t || !t.startsWith('data:')) continue;
+                const payload = t.slice(5).trim();
+                if (payload === '[DONE]') continue;
+                try {
+                    const json = JSON.parse(payload);
+                    const delta = json.choices?.[0]?.delta?.content || '';
+                    if (delta) { full += delta; onDelta && onDelta(delta); }
+                } catch { /* keep-alive / partial */ }
+            }
+        }
+        return full;
+    }
+
     backToMaps() {
         this.resultSection.style.display = 'none';
         this.mapsGrid.querySelectorAll('.map-card').forEach(c => { c.classList.remove('selected', 'dimmed'); });
@@ -1203,6 +1435,10 @@ class GpsDaAlma {
         this.mapsData = null;
         this.selectedMap = null;
         this.lastDoc = '';
+        this.lastData = null;
+        this.chatHistory = [];
+        this.chatMessages.innerHTML = '';
+        this.chatSuggest.innerHTML = '';
         document.getElementById('ferramenta').scrollIntoView({ behavior: 'smooth' });
         setTimeout(() => this.destinoInput.focus(), 500);
     }

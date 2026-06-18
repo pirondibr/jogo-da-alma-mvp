@@ -593,6 +593,41 @@
             display: block;
         }
 
+        /* ── CHAT ── */
+        .chat-section { margin-top: 1.25rem; border: 1px solid var(--border); border-radius: 18px; background: var(--bg); overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .chat-head { display: flex; align-items: center; gap: 0.7rem; padding: 1rem 1.4rem; border-bottom: 1px solid var(--border-light); background: var(--bg-secondary); }
+        .chat-head .chat-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px var(--green-soft); flex-shrink: 0; }
+        .chat-head h3 { font-family: 'Fraunces', Georgia, serif; font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+        .chat-head p { font-size: 0.8rem; color: var(--text3); }
+        .chat-messages { padding: 1.3rem 1.4rem; display: flex; flex-direction: column; gap: 1rem; max-height: 480px; overflow-y: auto; }
+        .chat-msg { display: flex; gap: 0.7rem; max-width: 90%; animation: cardIn 0.35s ease both; }
+        .chat-msg.user { align-self: flex-end; flex-direction: row-reverse; }
+        .chat-msg.ai { align-self: flex-start; }
+        .chat-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; margin-top: 2px; }
+        .chat-avatar.ai { background: var(--indigo-soft); color: var(--indigo); }
+        .chat-avatar.me { background: var(--accent-soft); color: var(--accent); }
+        .chat-bubble { padding: 0.75rem 1rem; border-radius: 14px; font-size: 0.94rem; line-height: 1.6; color: var(--text2); }
+        .chat-msg.ai .chat-bubble { background: var(--bg-secondary); border: 1px solid var(--border-light); border-top-left-radius: 4px; }
+        .chat-msg.user .chat-bubble { background: var(--accent); color: #fff; border-top-right-radius: 4px; }
+        .chat-bubble b { color: var(--text); font-weight: 700; }
+        .chat-msg.user .chat-bubble b { color: #fff; }
+        .chat-bubble p { margin: 0 0 0.55rem; }
+        .chat-bubble p:last-child { margin-bottom: 0; }
+        .chat-bubble ul { margin: 0.25rem 0 0.55rem 1.1rem; }
+        .chat-bubble li { margin: 0.15rem 0; }
+        .chat-bubble.streaming::after { content: '▋'; color: var(--indigo); animation: blink 1s steps(2) infinite; margin-left: 1px; }
+        @keyframes blink { 0%,50% { opacity: 1; } 50.1%,100% { opacity: 0; } }
+        .chat-suggest { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 1.4rem 0.4rem; }
+        .chat-chip { padding: 0.45rem 0.9rem; border: 1px solid var(--border); border-radius: 100px; background: var(--bg); color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 0.83rem; cursor: pointer; transition: all 0.18s ease; }
+        .chat-chip:hover { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-soft); }
+        .chat-input-row { display: flex; gap: 0.6rem; padding: 1rem 1.4rem 1.3rem; border-top: 1px solid var(--border-light); align-items: flex-end; }
+        .chat-input { flex: 1; padding: 0.7rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-secondary); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; line-height: 1.5; resize: none; outline: none; max-height: 150px; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+        .chat-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(31,41,55,0.06); }
+        .chat-send { flex-shrink: 0; width: 44px; height: 44px; border: none; border-radius: 12px; background: var(--accent); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .chat-send:hover:not(:disabled) { background: var(--accent-hover); transform: translateY(-1px); }
+        .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+        .chat-send svg { width: 18px; height: 18px; }
+
         /* ── FOOTER ── */
         .footer { padding: 3rem 2rem; border-top: 1px solid var(--border-light); text-align: center; }
         .footer p { font-size: 0.85rem; color: var(--text-muted); }
@@ -824,6 +859,25 @@
             </div>
             <div class="result-frame-wrap">
                 <iframe id="resultFrame" title="Geometria do Jogo da Alma"></iframe>
+            </div>
+
+            <!-- CHAT sobre o resultado -->
+            <div class="chat-section" id="chatSection">
+                <div class="chat-head">
+                    <span class="chat-dot"></span>
+                    <div>
+                        <h3>Converse com o resultado</h3>
+                        <p>Aprofunde, teste e tire dúvidas sobre a sua geometria — o chat conhece todo o seu mapa.</p>
+                    </div>
+                </div>
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-suggest" id="chatSuggest"></div>
+                <div class="chat-input-row">
+                    <textarea id="chatInput" class="chat-input" rows="1" placeholder="Pergunte sobre o vértice-chave, o primeiro passo, a ponte não-dual..."></textarea>
+                    <button class="chat-send" id="chatSend" title="Enviar">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
 
