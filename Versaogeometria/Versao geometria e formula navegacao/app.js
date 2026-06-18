@@ -1159,6 +1159,8 @@ class GpsDaAlma {
         this.generateBtn.disabled = true;
         this.remapBtn.disabled = true;
         this.startLoading(LOADING_MESSAGES_GEO);
+        // leva a pessoa até o loading (que fica no card de input, acima dos mapas)
+        this.statusBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
         try {
             const userMsg = this.buildGeoUserMsg(mp);
