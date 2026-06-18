@@ -615,6 +615,11 @@ O objetivo nunca é "mais". É **proporcional à situação**. O mesmo gesto pod
 ## IDIOMA NATIVO (Lei Não-Dual)
 Se a pessoa informar seu chakra dominante, esse é o **idioma nativo** dela — não o obstáculo. Ela acessa os outros chakras *através* dele. Não mande "vire outra pessoa": mostre como a energia que falta já vive dentro do que ela já é. (Ex.: pra alguém Cardíaco, em vez de "tenha mais limites", diga "porque você ama, precisa se incluir no amor".)
 
+## DUAS PORTAS DE ENTRADA (o input dirá o MODO)
+A pessoa chega por uma de duas portas:
+- **MODO ALVO (top-down):** ela já tem um destino/resultado. Você localiza ONDE ela está (a casa) e traça as rotas até lá. O alvo vem dado.
+- **MODO SITUAÇÃO (bottom-up):** ela traz uma cena/dor concreta, SEM um objetivo claro. Aqui você TAMBÉM revela os destinos possíveis: cada mapa propõe um **"alvo_possivel"** ("o que você poderia querer alcançar a partir daqui") para a pessoa ressoar. Se o continente não foi informado, infira e preencha o campo "continente". O campo "alvo" do JSON, nesse modo, deve conter o destino mais provável que você inferiu.
+
 ## SUA TAREFA AGORA (etapa 1 de 2)
 Gere **2 ou 3 MAPAS POSSÍVEIS** — leituras diferentes e plausíveis de ONDE a raiz da situação pode estar. Cada mapa aponta para um **chakra/tema diferente** (não repita o mesmo país). Não decida qual é o certo: é a pessoa quem vai ressoar. Para cada mapa, faça perguntas e dê um exemplo concreto para a pessoa testar a aderência.
 
@@ -631,6 +636,7 @@ Responda **APENAS com um objeto JSON válido**, sem markdown, sem cercas de cód
       "id": "slug-curto",
       "titulo": "Título do mapa começando com 'Se a raiz for…' (≤ 60 caracteres).",
       "chakra": "uma chave: raiz|sacral|plexo|cardiaco|laringeo|frontal|coronario",
+      "alvo_possivel": "SÓ no MODO SITUAÇÃO: o destino plausível a partir desta leitura (≤ 90 caracteres). No MODO ALVO, deixe vazio.",
       "amplo": "1 frase: o princípio universal por trás deste mapa (visão Ampla).",
       "medio": "1 frase: o padrão — como esse chakra+tema costuma aparecer em várias áreas (visão Média).",
       "especifico": "1 frase: como isso apareceria concretamente NO caso da pessoa (visão Específica, inferida por lógica).",
@@ -769,6 +775,7 @@ class GpsDaAlma {
         this.model = localStorage.getItem('ja_gps_model') || 'anthropic/claude-sonnet-4.6';
         this.continente = '';
         this.idiomaNativo = '';
+        this.mode = localStorage.getItem('ja_gps_mode') || 'situacao';
         this.mapsData = null;
         this.selectedMap = null;
         this.lastDoc = '';
@@ -781,6 +788,7 @@ class GpsDaAlma {
         this.renderChips();
         this.bind();
         this.hydrateSettings();
+        this.renderMode();
         this.initReveal();
     }
 
@@ -797,6 +805,15 @@ class GpsDaAlma {
         this.ondeInput = this.$('ondeInput');
         this.continentChips = this.$('continentChips');
         this.nativeChips = this.$('nativeChips');
+        this.modeToggle = this.$('modeToggle');
+        this.modeDesc = this.$('modeDesc');
+        this.continentBlock = this.$('continentBlock');
+        this.continentLabel = this.$('continentLabel');
+        this.continentHint = this.$('continentHint');
+        this.destinoBlock = this.$('destinoBlock');
+        this.ondeBlock = this.$('ondeBlock');
+        this.ondeLabel = this.$('ondeLabel');
+        this.ondeHint = this.$('ondeHint');
         this.generateBtn = this.$('generateBtn');
         this.statusBox = this.$('statusBox');
         this.loadingText = this.$('loadingText');
@@ -849,10 +866,13 @@ class GpsDaAlma {
     bind() {
         this.ctaBtn?.addEventListener('click', () => {
             document.getElementById('ferramenta').scrollIntoView({ behavior: 'smooth' });
-            setTimeout(() => this.destinoInput.focus(), 600);
+            setTimeout(() => this.focusPrimaryField(), 600);
         });
         this.settingsToggle.addEventListener('click', () => this.settingsPanel.classList.toggle('open'));
         this.saveSettingsBtn.addEventListener('click', () => this.saveSettings());
+        this.modeToggle.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => this.setMode(btn.dataset.mode));
+        });
         this.generateBtn.addEventListener('click', () => this.handleGenerateMaps());
         this.remapBtn.addEventListener('click', () => this.handleGenerateMaps());
         this.downloadHtmlBtn.addEventListener('click', () => this.downloadHTML());
@@ -873,6 +893,47 @@ class GpsDaAlma {
     hydrateSettings() {
         if (this.apiKey) this.apiKeyInput.value = this.apiKey;
         this.modelInput.value = this.model;
+    }
+
+    focusPrimaryField() {
+        if (this.mode === 'situacao') this.ondeInput.focus();
+        else this.destinoInput.focus();
+    }
+
+    setMode(mode) {
+        if (mode !== 'situacao' && mode !== 'alvo') return;
+        this.mode = mode;
+        localStorage.setItem('ja_gps_mode', mode);
+        this.renderMode();
+    }
+
+    /* Ajusta rótulos, dicas e visibilidade conforme a porta de entrada. */
+    renderMode() {
+        const isSit = this.mode === 'situacao';
+        this.modeToggle.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.mode === this.mode);
+        });
+
+        if (isSit) {
+            this.modeDesc.innerHTML = 'Você traz uma <b>cena</b> ou um incômodo concreto, sem precisar de um objetivo. A IA revela os continentes e os <b>alvos possíveis</b> — e você ressoa.';
+            // continente vira opcional
+            this.continentLabel.innerHTML = 'Em qual continente isso acontece? <span style="color:var(--text3);font-weight:400">(opcional)</span>';
+            this.continentHint.textContent = 'Se você já souber a área da vida, marque. Se não, a IA descobre pela sua descrição.';
+            // alvo escondido
+            this.destinoBlock.classList.add('hidden');
+            // relato é o campo principal
+            this.ondeLabel.textContent = 'O que está acontecendo?';
+            this.ondeHint.textContent = 'A cena, curta e crua. O que aconteceu, o que você sentiu, como agiu. Não precisa de objetivo — a IA revela os caminhos.';
+            this.ondeInput.placeholder = 'Ex: faz 4 dias que minha mãe ofendeu minha filha e eu não consegui falar nada. Engulo, finjo que está tudo bem, mas por dentro fervo.';
+        } else {
+            this.modeDesc.innerHTML = 'Você já sabe <b>aonde quer chegar</b>. A IA localiza onde você está e desenha as rotas possíveis até lá.';
+            this.continentLabel.innerHTML = 'Em qual continente você quer gerar movimento?';
+            this.continentHint.textContent = 'A área da vida — a visão ampla. Escolha uma.';
+            this.destinoBlock.classList.remove('hidden');
+            this.ondeLabel.textContent = 'E onde você está agora?';
+            this.ondeHint.textContent = 'O atrito de hoje, curto e cru. Não precisa explicar tudo — a IA infere o resto.';
+            this.ondeInput.placeholder = 'Ex: faz 4 dias que minha mãe ofendeu minha filha e eu não consegui falar nada. Engulo, finjo que está tudo bem, mas por dentro fervo.';
+        }
     }
 
     saveSettings() {
@@ -915,13 +976,20 @@ class GpsDaAlma {
             this.settingsPanel.classList.add('open');
             return;
         }
-        if (!this.continente) {
-            this.showError('Escolha o <strong>continente</strong> (a área da vida) onde você quer gerar movimento.');
-            return;
-        }
-        if (destino.length < 4 && onde.length < 12) {
-            this.showError('Diga ao menos <strong>aonde quer chegar</strong> ou <strong>onde está agora</strong> com um pouco mais de detalhe.');
-            return;
+        if (this.mode === 'situacao') {
+            if (onde.length < 15) {
+                this.showError('Conte <strong>o que está acontecendo</strong> com um pouco mais de detalhe (algumas frases).');
+                return;
+            }
+        } else {
+            if (!this.continente) {
+                this.showError('Escolha o <strong>continente</strong> (a área da vida) onde você quer gerar movimento.');
+                return;
+            }
+            if (destino.length < 4 && onde.length < 12) {
+                this.showError('Diga ao menos <strong>aonde quer chegar</strong> ou <strong>onde está agora</strong> com um pouco mais de detalhe.');
+                return;
+            }
         }
 
         this.generateBtn.disabled = true;
@@ -952,16 +1020,28 @@ class GpsDaAlma {
 
     buildMapsUserMsg(nome, destino, onde) {
         const parts = [];
+        const isSit = this.mode === 'situacao';
+        parts.push(`MODO: ${isSit ? 'SITUAÇÃO (bottom-up — a pessoa traz uma cena, sem alvo definido)' : 'ALVO (top-down — a pessoa já tem um destino)'}`);
         if (nome) parts.push(`Nome da pessoa: ${nome}`);
-        parts.push(`Continente (área da vida onde quer gerar movimento): ${this.continente}`);
-        if (destino) parts.push(`Alvo (aonde quer chegar): ${destino}`);
-        if (onde) parts.push(`Onde está agora (o atrito atual):\n${onde}`);
+        if (this.continente) parts.push(`Continente (área da vida): ${this.continente}`);
+        else if (isSit) parts.push(`Continente: NÃO informado — infira a partir da descrição e preencha o campo "continente".`);
+        if (destino && !isSit) parts.push(`Alvo (aonde quer chegar): ${destino}`);
+        if (onde) parts.push(`${isSit ? 'Situação (o que está acontecendo)' : 'Onde está agora (o atrito atual)'}:\n${onde}`);
         if (this.idiomaNativo) parts.push(`Idioma nativo (chakra dominante da pessoa): ${this.idiomaNativo}`);
-        parts.push(`\nGere os 2–3 mapas possíveis (visão Amplo/Médio/Específico) com perguntas de ressonância. Não dê uma resposta direta.`);
+        if (isSit) {
+            parts.push(`\nComo é MODO SITUAÇÃO: a pessoa não trouxe um alvo. Para cada mapa, proponha também um "alvo_possivel" (um destino plausível a partir dessa leitura) para ela ressoar. Gere os 2–3 mapas possíveis (visão Amplo/Médio/Específico) com perguntas de ressonância. Não dê uma resposta direta.`);
+        } else {
+            parts.push(`\nGere os 2–3 mapas possíveis (visão Amplo/Médio/Específico) com perguntas de ressonância. Não dê uma resposta direta.`);
+        }
         return parts.join('\n');
     }
 
     renderMaps(data) {
+        const titleEl = this.$('mapsTitle');
+        if (titleEl) titleEl.textContent = this.mode === 'situacao'
+            ? 'Por qual leitura a sua situação ressoa?'
+            : 'Qual destes mapas parece mais próximo da sua realidade?';
+
         // banner do nível Amplo (princípio universal + continente)
         const cont = CONTINENTES.find(c => c.nome === (data.continente || this.continente));
         const emoji = cont ? cont.emoji : '🧭';
@@ -1002,6 +1082,7 @@ class GpsDaAlma {
   </div>
 
   <div class="map-route">
+    ${mp.alvo_possivel ? `<div class="route-step"><span class="route-level">Alvo possível</span><span class="route-val"><b>${escapeHtmlSafe(mp.alvo_possivel)}</b></span></div>` : ''}
     <div class="route-step"><span class="route-level">País · Chakra</span><span class="route-val"><b>${chakra.nome}</b> · ${escapeHtmlSafe(chakra.sub)}</span></div>
     <div class="route-step"><span class="route-level">Cidade · Tema</span><span class="route-val">${escapeHtmlSafe(mp.tema || '—')}</span></div>
     <div class="route-step"><span class="route-level">Rua · Elemento</span><span class="route-val">${escapeHtmlSafe(mp.elemento || '—')}</span></div>
@@ -1076,7 +1157,7 @@ class GpsDaAlma {
             data.navegacao = data.navegacao || {};
             const cont = this.mapsData?.continente || this.continente;
             if (!data.navegacao.continente) data.navegacao.continente = cont;
-            if (!data.navegacao.alvo) data.navegacao.alvo = this.mapsData?.alvo || this.destinoInput.value.trim();
+            if (!data.navegacao.alvo) data.navegacao.alvo = mp.alvo_possivel || this.mapsData?.alvo || this.destinoInput.value.trim();
             if (!data.navegacao.cidade) data.navegacao.cidade = mp.tema;
             if (!data.navegacao.rua) data.navegacao.rua = mp.elemento;
             if (!data.navegacao.casa) data.navegacao.casa = mp.casa;
@@ -1099,11 +1180,13 @@ class GpsDaAlma {
     buildGeoUserMsg(mp) {
         const d = this.mapsData || {};
         const parts = [];
+        parts.push(`MODO de entrada: ${this.mode === 'situacao' ? 'SITUAÇÃO (o alvo abaixo foi inferido/escolhido por ressonância)' : 'ALVO (destino dado pela pessoa)'}`);
         if (d.nome) parts.push(`Nome da pessoa: ${d.nome}`);
-        parts.push(`Continente (área da vida): ${d.continente || this.continente}`);
-        if (d.alvo || this.destinoInput.value.trim()) parts.push(`Alvo (destino desejado): ${d.alvo || this.destinoInput.value.trim()}`);
+        parts.push(`Continente (área da vida): ${d.continente || this.continente || '(inferir)'}`);
+        const alvoFinal = mp.alvo_possivel || d.alvo || this.destinoInput.value.trim();
+        if (alvoFinal) parts.push(`Alvo (destino): ${alvoFinal}`);
         const onde = this.ondeInput.value.trim();
-        if (onde) parts.push(`Onde a pessoa está agora (relato cru):\n${onde}`);
+        if (onde) parts.push(`${this.mode === 'situacao' ? 'Situação relatada' : 'Onde a pessoa está agora'} (relato cru):\n${onde}`);
         if (this.idiomaNativo) parts.push(`Idioma nativo (chakra dominante): ${this.idiomaNativo}`);
         parts.push('');
         parts.push(`A pessoa escolheu por RESSONÂNCIA o seguinte mapa — use o chakra/tema dele como centro do diagnóstico:`);
@@ -1440,7 +1523,7 @@ ${JSON.stringify(ctx, null, 1)}`;
         this.chatMessages.innerHTML = '';
         this.chatSuggest.innerHTML = '';
         document.getElementById('ferramenta').scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => this.destinoInput.focus(), 500);
+        setTimeout(() => this.focusPrimaryField(), 500);
     }
 
     showError(html) {

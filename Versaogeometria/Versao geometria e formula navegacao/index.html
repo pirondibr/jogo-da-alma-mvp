@@ -362,6 +362,15 @@
         }
         .chip.selected.gold { border-color: var(--gold); background: var(--gold-soft); color: #8A6D1E; }
 
+        /* seletor de modo (porta de entrada) */
+        .mode-toggle { display: inline-flex; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 12px; padding: 4px; gap: 4px; flex-wrap: wrap; }
+        .mode-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.15rem; border: none; background: transparent; border-radius: 9px; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.18s ease; }
+        .mode-btn:hover { color: var(--text); }
+        .mode-btn.active { background: var(--bg); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .mode-btn svg { width: 16px; height: 16px; }
+        .mode-desc { font-size: 0.86rem; color: var(--text3); margin-top: 0.7rem; line-height: 1.5; }
+        .field-block.hidden { display: none; }
+
         .input-footer {
             display: flex;
             align-items: center;
@@ -770,6 +779,22 @@
         <div class="input-card" id="inputCard">
 
             <div class="field-block">
+                <div class="field-label">Por onde você quer começar?</div>
+                <div class="field-hint">Duas portas de entrada — escolha a que combina com como você chegou.</div>
+                <div class="mode-toggle" id="modeToggle">
+                    <button type="button" class="mode-btn active" data-mode="situacao">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Situação
+                    </button>
+                    <button type="button" class="mode-btn" data-mode="alvo">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>
+                        Alvo / Resultado
+                    </button>
+                </div>
+                <div class="mode-desc" id="modeDesc"></div>
+            </div>
+
+            <div class="field-block">
                 <div class="name-row">
                     <div class="field-group">
                         <label class="field-label" for="nameInput">Seu nome</label>
@@ -778,21 +803,21 @@
                 </div>
             </div>
 
-            <div class="field-block">
-                <div class="field-label">Em qual continente você quer gerar movimento?</div>
-                <div class="field-hint">A área da vida — a visão ampla. Escolha uma.</div>
+            <div class="field-block" id="continentBlock">
+                <div class="field-label" id="continentLabel">Em qual continente você quer gerar movimento?</div>
+                <div class="field-hint" id="continentHint">A área da vida — a visão ampla. Escolha uma.</div>
                 <div class="chips" id="continentChips"></div>
             </div>
 
-            <div class="field-block">
+            <div class="field-block" id="destinoBlock">
                 <div class="field-label" for="destinoInput">Aonde você quer chegar? <span style="color:var(--text3);font-weight:400">(o alvo)</span></div>
                 <div class="field-hint">Em uma frase: o resultado que você gostaria de alcançar.</div>
                 <input type="text" id="destinoInput" class="text-input" placeholder="Ex: conseguir colocar meus limites com a minha mãe sem destruir a relação">
             </div>
 
-            <div class="field-block">
-                <div class="field-label" for="ondeInput">E onde você está agora?</div>
-                <div class="field-hint">O atrito de hoje, curto e cru. Não precisa explicar tudo — a IA infere o resto.</div>
+            <div class="field-block" id="ondeBlock">
+                <div class="field-label" id="ondeLabel" for="ondeInput">O que está acontecendo?</div>
+                <div class="field-hint" id="ondeHint">A cena, curta e crua. O que aconteceu, o que você sentiu, como agiu. Não precisa de objetivo — a IA revela os caminhos.</div>
                 <textarea id="ondeInput" class="text-input" placeholder="Ex: faz 4 dias que minha mãe ofendeu minha filha e eu não consegui falar nada. Engulo, finjo que está tudo bem, mas por dentro fervo."></textarea>
             </div>
 
