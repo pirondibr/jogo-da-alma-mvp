@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jogo da Alma — Relatório Completo — Anna</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAFBFC;
+    --card: #FFFFFF;
+    --text: #1F2937;
+    --text-secondary: #6B7280;
+    --text-muted: #9CA3AF;
+    --border: #E5E7EB;
+    --border-light: #F3F4F6;
+    --blocked-bg: #FEF3C7;
+    --blocked-text: #92400E;
+    --blocked-border: #FCD34D;
+    --excessive-bg: #FEE2E2;
+    --excessive-text: #991B1B;
+    --excessive-border: #FCA5A5;
+    --positive-bg: #ECFDF5;
+    --positive-text: #065F46;
+    --positive-border: #6EE7B7;
+    --accent-laringeo: #3B82F6;
+    --accent-cardiaco: #10B981;
+    --accent-plexo: #F59E0B;
+    --accent-frontal: #8B5CF6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 24px 16px;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+  }
+  .header-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 34px;
+    color: var(--text);
+    margin-top: 6px;
+    font-weight: 400;
+  }
+  .header-sub {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  /* Caso box */
+  .caso-box {
+    background: #1F2937;
+    color: #F9FAFB;
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .caso-box .label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9CA3AF;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .caso-box p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #E5E7EB;
+    font-style: italic;
+  }
+
+  /* Module sections */
+  .modulo {
+    margin-bottom: 48px;
+  }
+  .modulo-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border-light);
+  }
+  .modulo-num {
+    background: var(--text);
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .modulo-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 22px;
+    color: var(--text);
+  }
+
+  .modulo p {
+    font-size: 15px;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  .modulo .destaque {
+    background: var(--border-light);
+    border-left: 3px solid var(--text-muted);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--text);
+  }
+
+  .modulo .destaque-positivo {
+    background: var(--positive-bg);
+    border-left: 3px solid var(--accent-cardiaco);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--positive-text);
+  }
+
+  .modulo .destaque-alerta {
+    background: var(--blocked-bg);
+    border-left: 3px solid var(--accent-plexo);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 16px 0;
+    font-size: 14px;
+    color: var(--blocked-text);
+  }
+
+  .modulo .formula-step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+  .formula-step .step-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .formula-step p {
+    font-size: 14px;
+    margin-bottom: 0;
+  }
+
+  /* Protocolo */
+  .protocolo-etapa {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .protocolo-etapa .etapa-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .etapa-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .etapa-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .lembrete-box {
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin: 8px 0;
+    font-size: 15px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+  .lembrete-p1 {
+    background: #FEF2F2;
+    border-left: 3px solid #EF4444;
+    color: #991B1B;
+  }
+  .lembrete-p2 {
+    background: var(--positive-bg);
+    border-left: 3px solid var(--accent-cardiaco);
+    color: var(--positive-text);
+  }
+
+  /* Módulo 4 - tabela */
+  .ext-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .ext-table th {
+    background: var(--border-light);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+  .ext-table th:first-child { border-radius: 10px 0 0 0; }
+  .ext-table th:last-child { border-radius: 0 10px 0 0; }
+  .ext-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+  }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-sim { background: #DBEAFE; color: #1E40AF; }
+  .badge-nao { background: #FEE2E2; color: #991B1B; }
+  .badge-parcial { background: #FEF3C7; color: #92400E; }
+
+  /* ============================================ */
+  /* SOUL HUD */
+  /* ============================================ */
+
+  .hud-divider {
+    text-align: center;
+    margin: 56px 0 40px;
+    position: relative;
+  }
+  .hud-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+  .hud-divider span {
+    background: var(--bg);
+    padding: 0 20px;
+    position: relative;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .hud-container {
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .hud-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .hud-header .hud-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #CBD5E1;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+  .hud-header .hud-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 4px;
+  }
+
+  .hud-score {
+    background: #111827;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .hud-score-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px solid var(--accent-laringeo);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-laringeo);
+    flex-shrink: 0;
+  }
+  .hud-score-info {
+    flex: 1;
+  }
+  .hud-score-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #F9FAFB;
+  }
+  .hud-score-sub {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-top: 2px;
+  }
+
+  .xp-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .xp-bar-track {
+    flex: 1;
+    height: 6px;
+    background: #374151;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .xp-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+  }
+  .xp-bar-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #9CA3AF;
+    min-width: 32px;
+    text-align: right;
+  }
+  .xp-bar-light .xp-bar-track {
+    background: #E5E7EB;
+  }
+
+  .hud-lembrete {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+  }
+  .hud-lembrete .lem-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .hud-lembrete .lem-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* Chakra cards */
+  .hud-card {
+    background: var(--card);
+    border-radius: 14px;
+    border: 1px solid var(--border-light);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .hud-card-header {
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hud-card-emoji {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .hud-card-info {
+    flex: 1;
+  }
+  .hud-card-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .hud-card-badges {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 2px;
+    flex-wrap: wrap;
+  }
+  .hud-badge {
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .hud-badge-blocked { background: #FEF3C7; color: #D97706; }
+  .hud-badge-excessive { background: #EDE9FE; color: #7C3AED; }
+  .hud-badge-role { color: #9CA3AF; font-weight: 600; font-size: 10px; }
+
+  .hud-card-body {
+    padding: 0 18px 18px;
+  }
+  .hud-card-tema {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  .hud-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .hud-col-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .hud-col-label .dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+  .hud-col-red .hud-col-label { color: #DC2626; }
+  .hud-col-red .dot { background: #EF4444; }
+  .hud-col-green .hud-col-label { color: #059669; }
+  .hud-col-green .dot { background: #10B981; }
+
+  .hud-item {
+    font-size: 12px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  .hud-item-red {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+  .hud-item-green {
+    background: #ECFDF5;
+    color: #065F46;
+  }
+
+  .hud-missao {
+    margin-top: 14px;
+    border: 1px dashed;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .hud-missao-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .hud-missao-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .hud-footer {
+    text-align: center;
+    padding: 28px 0 16px;
+    font-size: 10px;
+    color: #CBD5E1;
+  }
+
+  /* Print */
+  @media print {
+    body { padding: 0; }
+    .container { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- ====== HEADER ====== -->
+  <div class="header">
+    <div class="header-label">Jogo da Alma 2.0</div>
+    <h1>Relatório Completo</h1>
+    <div class="header-sub">Módulos 1 a 4 + Soul HUD</div>
+  </div>
+
+  <!-- ====== CASO ====== -->
+  <div class="caso-box">
+    <div class="label">Caso — Anna</div>
+    <p>"Minha mãe veio visitar a gente e quando eu não estava em casa, ela falou pra minha filha Emma que ser vegana é coisa de gente egoísta. Quando eu descobri fiquei com muita raiva, mas já faz 4 dias e eu não consegui falar nada pra ela. Toda vez que eu penso em ter essa conversa eu sinto um peso enorme, como se eu fosse destruir ela. Eu sei que preciso falar, mas não consigo. Fico pensando que ela já tem tantos problemas, que eu vou ser mais um. E aí eu engulo e finjo que tá tudo bem, mas por dentro tô com raiva e me sentindo horrível."</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <!--                    MÓDULO 1 — O ESPELHO                          -->
+  <!-- ================================================================ -->
+  <div class="modulo">
+    <div class="modulo-header">
+      <div class="modulo-num">1</div>
+      <div class="modulo-title">O que está acontecendo com você</div>
+    </div>
+
+    <p>Tem duas forças puxando você em direções opostas agora, Anna — e é por isso que você se sente horrível.</p>
+
+    <p>A primeira força é real e legítima: <strong>raiva</strong>. Sua mãe cruzou um limite concreto. Ela falou algo sobre suas escolhas — e falou pra sua filha, quando você não estava lá pra responder. Não é exagero sentir raiva disso. É uma resposta proporcional à situação.</p>
+
+    <p>A segunda força é o que trava a primeira: <strong>culpa antecipada</strong>. Antes mesmo de abrir a boca, você já sente o peso do que acha que vai causar. "Vou destruir ela." "Ela já tem tantos problemas." "Eu vou ser mais um." A culpa chega antes da conversa — e a conversa nunca acontece.</p>
+
+    <p>A cadeia funciona assim: algo acontece que exige posicionamento → você sente a necessidade de falar → a culpa antecipada dispara → você recua → engole → finge que tá tudo bem → a raiva não vai embora, ela fermenta → e agora, além da raiva pela situação original, tem a raiva por ter se calado. Duas raivas. E nenhuma com saída.</p>
+
+    <div class="destaque">
+      <strong>O centro do problema:</strong> Laríngeo bloqueado — a voz está presa. Você sabe o que precisa dizer, mas o sistema trava antes de falar. Alimentando esse bloqueio tem o Cardíaco excessivo — a compaixão pela sua mãe virou autoanulação. Você está colocando o conforto emocional dela acima da proteção da Emma e do seu próprio bem-estar. E por baixo de tudo, o Plexo Solar bloqueado — a dificuldade de sustentar uma posição quando o outro é alguém que você ama.
+    </div>
+
+    <p>O resultado visível: 4 dias de silêncio, raiva acumulada, e uma filha que ouviu algo sobre a própria mãe e não viu nenhuma resposta.</p>
+  </div>
+
+  <!-- ================================================================ -->
+  <!--                    MÓDULO 2 — A FÓRMULA                          -->
+  <!-- ================================================================ -->
+  <div class="modulo">
+    <div class="modulo-header">
+      <div class="modulo-num">2</div>
+      <div class="modulo-title">Por que você funciona assim</div>
+    </div>
+
+    <div class="formula-step">
+      <div class="step-label" style="color: var(--accent-laringeo);">Camada 1 — O Código da Espécie</div>
+      <p>No ambiente ancestral, confrontar alguém com poder sobre você — um pai, uma mãe, um líder — era arriscado. A hierarquia familiar era uma questão de sobrevivência, não de preferência. O cérebro desenvolveu um sistema que diz: <em>"não ameace o vínculo com quem cuida de você."</em> Essa cautela não é covardia — é um programa de proteção com milhões de anos. A espécie sobreviveu em parte porque os filhos aprenderam a não romper com quem os protege, mesmo quando discordam.</p>
+    </div>
+
+    <div class="formula-step">
+      <div class="step-label" style="color: var(--accent-plexo);">Camada 2 — O Código da Sua História</div>
+      <p>Em algum momento, Anna, você aprendeu que expressar desacordo com sua mãe tem um custo alto. Talvez ela se magoasse visivelmente. Talvez chorasse, se fechasse, ou te fizesse sentir culpada por ter uma opinião diferente. O sistema registrou: <em>"quando eu falo o que penso, o vínculo fica ameaçado."</em> E a solução que funcionou foi calar. Engolir. Fingir que tá tudo bem. Isso não foi fraqueza — foi inteligência emocional da criança que você era, na situação que ela enfrentava.</p>
+    </div>
+
+    <div class="formula-step">
+      <div class="step-label" style="color: var(--accent-cardiaco);">Intenção Positiva</div>
+      <p>O sistema inteiro está tentando proteger o vínculo com sua mãe. Ele sabe que sua mãe é importante pra você. Ele sabe que confrontar pode criar dor. E ele escolhe o silêncio porque é a forma que ele conhece de manter a relação intacta. <strong>Seu sistema não é seu inimigo.</strong> Ele está tentando cuidar de algo que você ama — só que com uma estratégia que não serve mais.</p>
+    </div>
+
+    <div class="formula-step">
+      <div class="step-label" style="color: var(--accent-plexo);">Por que não é mais eficiente</div>
+      <p>Porque o silêncio não está protegendo o vínculo — está corroendo ele por dentro. Cada dia que passa sem a conversa, a raiva se acumula. A distância emocional cresce. Você está fisicamente presente mas emocionalmente se afastando. A estratégia que foi criada pra preservar o vínculo está destruindo o vínculo por dentro.</p>
+      <p>E tem mais: agora não é só sobre você e sua mãe. A Emma ouviu aquilo. Uma criança que viu a avó criticar as escolhas da mãe — e viu a mãe não responder. O silêncio aqui tem um custo que vai além de você.</p>
+    </div>
+
+    <div class="formula-step" style="border-color: var(--accent-cardiaco);">
+      <div class="step-label" style="color: var(--accent-cardiaco);">Versão Atualizada</div>
+      <p>A intenção se mantém — proteger o vínculo com sua mãe. A estratégia atualizada é:</p>
+      <p><strong>Laríngeo equilibrado:</strong> <em>"Posso falar a verdade com respeito. Comunicação clara resolve mais que silêncio."</em> — falar não destrói; o que destrói é o acúmulo do não-dito.</p>
+      <p><strong>Cardíaco equilibrado:</strong> <em>"Posso amar sem me anular. Manter limites saudáveis é cuidar do vínculo, não ameaçá-lo."</em> — compaixão pela mãe não precisa custar o apagamento de si mesma.</p>
+      <p><strong>Plexo Solar equilibrado:</strong> <em>"Posso me posicionar sem precisar dominar. Minha opinião tem valor mesmo que discordem."</em> — sustentar posição não é agredir. É existir.</p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!--                    MÓDULO 3 — O PROTOCOLO                        -->
+  <!-- ================================================================ -->
+  <div class="modulo">
+    <div class="modulo-header">
+      <div class="modulo-num">3</div>
+      <div class="modulo-title">O que fazer quando o padrão ativar</div>
+    </div>
+
+    <p>Você opera com duas mentes. A <strong>Mente Antiga</strong> é a que dispara a culpa antes da conversa, que diz "você vai destruir ela", que engole e finge. A <strong>Mente Nova</strong> é a que sabe que precisa falar, que sabe que o silêncio custa mais do que a conversa, que sabe que Emma precisa ver a mãe se posicionar. O problema não é saber — é que a Mente Antiga é mais rápida. Ela trava você antes de você chegar a agir.</p>
+
+    <!-- Etapa 1 -->
+    <div class="protocolo-etapa">
+      <div class="etapa-header">
+        <div class="etapa-num" style="background: #8B5CF6;">1</div>
+        <div class="etapa-title">Dissociar</div>
+      </div>
+      <p style="font-size: 14px;">Quando você pensar em ter a conversa com sua mãe e sentir aquele peso no peito — como se fosse destruir ela — pause. Reconheça:</p>
+      <div class="destaque" style="border-left-color: #8B5CF6; background: #F5F3FF;">
+        <em>"O programa de proteção de vínculo acabou de ligar. Ele está usando a culpa pra me impedir de falar. Isso é o programa — não é a realidade. Falar a verdade com respeito não destrói ninguém."</em>
+      </div>
+      <p style="font-size: 14px;">Você não é a culpa. Você é a consciência que observa a culpa aparecer. E quem observa pode escolher.</p>
+    </div>
+
+    <!-- Etapa 2 -->
+    <div class="protocolo-etapa">
+      <div class="etapa-header">
+        <div class="etapa-num" style="background: #F59E0B;">2</div>
+        <div class="etapa-title">Lembrar</div>
+      </div>
+      <div class="lembrete-box lembrete-p1">
+        <strong>Parte 1 (neutraliza a Mente Antiga):</strong><br>
+        "O programa acha que se eu falar, eu perco ela. Ele confunde confronto com destruição."
+      </div>
+      <div class="lembrete-box lembrete-p2">
+        <strong>Parte 2 (ativa a Mente Nova):</strong><br>
+        "O vínculo não se protege com silêncio. Se protege com verdade dita com amor."
+      </div>
+    </div>
+
+    <!-- Etapa 3 -->
+    <div class="protocolo-etapa">
+      <div class="etapa-header">
+        <div class="etapa-num" style="background: #10B981;">3</div>
+        <div class="etapa-title">Praticar</div>
+      </div>
+      <p style="font-size: 14px;">A ação concreta: tenha a conversa com sua mãe. Não precisa ser perfeita. Não precisa ser hoje se não estiver pronta — mas não pode ser nunca. Um caminho possível:</p>
+      <div class="destaque-positivo">
+        <em>"Mãe, eu te amo e isso não muda. Mas o que você falou pra Emma sobre ser vegana me magoou. Não é sobre você concordar com as minhas escolhas — é sobre não diminuir elas na frente da minha filha. Eu preciso que você respeite isso, mesmo que não concorde."</em>
+      </div>
+      <p style="font-size: 14px;"><strong>O que esperar:</strong> ela pode reagir — se magoar, chorar, se defender. Isso é o processo dela, não culpa sua. Você não está controlando a reação dela. Está controlando a sua ação. E a sua ação é falar com respeito e sustentar.</p>
+      <p style="font-size: 14px;"><strong>Se ela reagir mal:</strong> não recue. Sustente. Repita se necessário: <em>"Eu não estou brigando com você. Estou dizendo o que eu preciso."</em> A Mente Antiga vai gritar pra você pedir desculpas e recuar. Reconheça o grito. Não obedeça.</p>
+
+      <div class="destaque-alerta">
+        <strong>⚠️ Ponto de travamento provável:</strong> Dissociação emocional. A culpa vai chegar no corpo — peso no peito, nó na garganta, vontade de chorar antes de começar. Isso é o programa. Ele é intenso mas não é verdade. Falar com respeito não destrói quem ama. O que destrói é o acúmulo silencioso de raiva e distância.
+      </div>
+
+      <p style="font-size: 14px;"><strong>E a Emma:</strong> depois da conversa com sua mãe, converse com Emma. Não precisa entrar em detalhes — mas ela precisa saber que a mãe viu, que a mãe se importa, e que ser vegana não é egoísmo. Uma frase simples resolve: <em>"A vovó disse uma coisa que não concordo. Ser vegana é uma escolha que eu fiz com carinho, e tenho orgulho dela."</em></p>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!--                    MÓDULO 4 — O EXTERNO                          -->
+  <!-- ================================================================ -->
+  <div class="modulo">
+    <div class="modulo-header">
+      <div class="modulo-num">4</div>
+      <div class="modulo-title">O que está acontecendo fora de você</div>
+    </div>
+
+    <p>Os Módulos 1 a 3 cobriram o que acontece dentro de você — o programa que trava a fala, a culpa que antecipa a destruição, o silêncio que fermenta raiva. Mas essa situação tem uma parte que não é interna: sua mãe é uma pessoa real com comportamento próprio.</p>
+
+    <table class="ext-table">
+      <thead>
+        <tr>
+          <th>Variável</th>
+          <th>Lacuna</th>
+          <th>Influência</th>
+          <th>Prescrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>A outra pessoa (mãe)</strong></td>
+          <td>Opiniões sobre veganismo, forma de se comunicar com a neta</td>
+          <td><span class="badge badge-nao">Não controla</span></td>
+          <td>Você não controla o que ela pensa. Controla o que você comunica e que limites estabelece.</td>
+        </tr>
+        <tr>
+          <td><strong>Capacidade relacional</strong></td>
+          <td>Sabe o que quer dizer mas não consegue sustentar (interno trava)</td>
+          <td><span class="badge badge-sim">Pode influenciar</span></td>
+          <td>Módulos 1-3 — reprogramação do padrão de silêncio</td>
+        </tr>
+        <tr>
+          <td><strong>Ferramenta de comunicação</strong></td>
+          <td>Falta de modelo para confronto respeitoso com figura de autoridade</td>
+          <td><span class="badge badge-sim">Pode influenciar</span></td>
+          <td>Treinar o formato: "eu te amo + o que me magoou + o que preciso"</td>
+        </tr>
+        <tr>
+          <td><strong>Estratégia</strong></td>
+          <td>Estratégia atual é "engolir e fingir" — resultado previsível: mais do mesmo</td>
+          <td><span class="badge badge-sim">Pode influenciar</span></td>
+          <td>Mudar para comunicação direta com respeito</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>A variável que você não controla:</strong> como sua mãe vai reagir. Ela pode ouvir, se magoar, reagir mal, ou surpreender. Isso é o processo dela. O que você controla é se vai falar ou não, e como vai falar.</p>
+
+    <p><strong>A decisão que o externo coloca na mesa:</strong> nesse caso não é "ficar ou sair" — é <em>"falar ou continuar calada."</em> E as duas opções têm custo. Calar custa raiva acumulada, distância emocional e uma filha que não viu a mãe se posicionar. Falar custa o desconforto da conversa e o risco de reação da sua mãe. Só você sabe qual custo está disposta a pagar — mas só uma das opções tem chance de melhorar a situação.</p>
+
+    <div class="destaque">
+      <strong>O cruzamento interno/externo:</strong> a prescrição externa é clara — ter a conversa. Mas o programa interno (culpa antecipada + medo de destruir o vínculo) trava a execução. Isso confirma: o trabalho é paralelo. Cada vez que a Mente Nova sustentar uma posição com respeito (interno), ela entrega evidência de que falar não destrói (externo). E cada conversa honesta que não destruir a relação enfraquece o programa que dizia que ia destruir.
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!--                       SOUL HUD                                   -->
+  <!-- ================================================================ -->
+  <div class="hud-divider">
+    <span>Soul HUD</span>
+  </div>
+
+  <div class="hud-container">
+
+    <div class="hud-header">
+      <div class="hud-label">Jogo da Alma</div>
+      <div class="hud-title">Soul HUD</div>
+    </div>
+
+    <!-- Score -->
+    <div class="hud-score">
+      <div class="hud-score-circle">30%</div>
+      <div class="hud-score-info">
+        <div class="hud-score-title">Consciência Geral</div>
+        <div class="hud-score-sub">3 chakras ativos · Foco: Laríngeo</div>
+        <div class="xp-bar">
+          <div class="xp-bar-track">
+            <div class="xp-bar-fill" style="width: 30%; background: var(--accent-laringeo);"></div>
+          </div>
+          <div class="xp-bar-label">30%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lembrete -->
+    <div class="hud-lembrete">
+      <div class="lem-label">💡 Lembrete da Mente Nova</div>
+      <div class="lem-text">"O vínculo não se protege com silêncio. Se protege com verdade dita com amor."</div>
+    </div>
+
+    <!-- Chakra 1: Laríngeo -->
+    <div class="hud-card" style="border: 2px solid rgba(59,130,246,0.2);">
+      <div class="hud-card-header">
+        <div class="hud-card-emoji">🔵</div>
+        <div class="hud-card-info">
+          <div class="hud-card-name">Laríngeo</div>
+          <div class="hud-card-badges">
+            <span class="hud-badge hud-badge-blocked">Bloqueado</span>
+            <span class="hud-badge-role">★ Principal</span>
+          </div>
+          <div class="xp-bar xp-bar-light" style="margin-top: 6px;">
+            <div class="xp-bar-track">
+              <div class="xp-bar-fill" style="width: 20%; background: var(--accent-laringeo);"></div>
+            </div>
+            <div class="xp-bar-label" style="color: #9CA3AF;">20%</div>
+          </div>
+        </div>
+      </div>
+      <div class="hud-card-body">
+        <div class="hud-card-tema">Comunicação & Verdade</div>
+        <div class="hud-grid">
+          <div class="hud-col-red">
+            <div class="hud-col-label"><span class="dot"></span> Travado agora</div>
+            <div class="hud-item hud-item-red">4 dias sem falar o que precisa</div>
+            <div class="hud-item hud-item-red">"Se eu falar, vou destruir ela"</div>
+            <div class="hud-item hud-item-red">Engole mágoas sem comunicar</div>
+            <div class="hud-item hud-item-red">Finge que tá tudo bem</div>
+          </div>
+          <div class="hud-col-green">
+            <div class="hud-col-label"><span class="dot"></span> Para desbloquear</div>
+            <div class="hud-item hud-item-green">Coragem expressiva — falar mesmo quando é difícil</div>
+            <div class="hud-item hud-item-green">Confronto respeitoso — discordar sem destruir</div>
+            <div class="hud-item hud-item-green">Firmeza — sustentar a palavra sob pressão</div>
+            <div class="hud-item hud-item-green">"Comunicação clara resolve mais que silêncio"</div>
+          </div>
+        </div>
+        <div class="hud-missao" style="border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.04);">
+          <div class="hud-missao-label" style="color: var(--accent-laringeo);">🎯 Missão Ativa</div>
+          <div class="hud-missao-text">Ter a conversa com sua mãe usando o formato: "eu te amo + o que me magoou + o que preciso."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chakra 2: Cardíaco -->
+    <div class="hud-card">
+      <div class="hud-card-header">
+        <div class="hud-card-emoji">💚</div>
+        <div class="hud-card-info">
+          <div class="hud-card-name">Cardíaco</div>
+          <div class="hud-card-badges">
+            <span class="hud-badge hud-badge-excessive">Excessivo</span>
+            <span class="hud-badge-role">Secundário</span>
+          </div>
+          <div class="xp-bar xp-bar-light" style="margin-top: 6px;">
+            <div class="xp-bar-track">
+              <div class="xp-bar-fill" style="width: 35%; background: var(--accent-cardiaco);"></div>
+            </div>
+            <div class="xp-bar-label" style="color: #9CA3AF;">35%</div>
+          </div>
+        </div>
+      </div>
+      <div class="hud-card-body">
+        <div class="hud-card-tema">Amor & Compaixão</div>
+        <div class="hud-grid">
+          <div class="hud-col-red">
+            <div class="hud-col-label"><span class="dot"></span> Travado agora</div>
+            <div class="hud-item hud-item-red">Coloca o conforto da mãe acima do próprio</div>
+            <div class="hud-item hud-item-red">"Ela já tem tantos problemas"</div>
+            <div class="hud-item hud-item-red">Culpa por querer se posicionar</div>
+          </div>
+          <div class="hud-col-green">
+            <div class="hud-col-label"><span class="dot"></span> Para desbloquear</div>
+            <div class="hud-item hud-item-green">Amor próprio — nutrir a si como nutre o outro</div>
+            <div class="hud-item hud-item-green">Limites amorosos — proteger-se sem fechar o coração</div>
+            <div class="hud-item hud-item-green">"Posso amar sem me anular"</div>
+          </div>
+        </div>
+        <div class="hud-missao" style="border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.04);">
+          <div class="hud-missao-label" style="color: var(--accent-cardiaco);">🎯 Missão Ativa</div>
+          <div class="hud-missao-text">Quando sentir a culpa chegar antes da conversa, reconhecer: "cuidar de mim também é cuidar da relação."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chakra 3: Plexo Solar -->
+    <div class="hud-card">
+      <div class="hud-card-header">
+        <div class="hud-card-emoji">☀️</div>
+        <div class="hud-card-info">
+          <div class="hud-card-name">Plexo Solar</div>
+          <div class="hud-card-badges">
+            <span class="hud-badge hud-badge-blocked">Bloqueado</span>
+            <span class="hud-badge-role">Apoio</span>
+          </div>
+          <div class="xp-bar xp-bar-light" style="margin-top: 6px;">
+            <div class="xp-bar-track">
+              <div class="xp-bar-fill" style="width: 35%; background: var(--accent-plexo);"></div>
+            </div>
+            <div class="xp-bar-label" style="color: #9CA3AF;">35%</div>
+          </div>
+        </div>
+      </div>
+      <div class="hud-card-body">
+        <div class="hud-card-tema">Poder & Identidade</div>
+        <div class="hud-grid">
+          <div class="hud-col-red">
+            <div class="hud-col-label"><span class="dot"></span> Travado agora</div>
+            <div class="hud-item hud-item-red">Não sustenta posição diante da mãe</div>
+            <div class="hud-item hud-item-red">Recua quando o outro reage</div>
+            <div class="hud-item hud-item-red">"Eu vou ser mais um problema"</div>
+          </div>
+          <div class="hud-col-green">
+            <div class="hud-col-label"><span class="dot"></span> Para desbloquear</div>
+            <div class="hud-item hud-item-green">Coragem — agir apesar do medo</div>
+            <div class="hud-item hud-item-green">Integridade — coerência entre o que sente e faz</div>
+            <div class="hud-item hud-item-green">"Posso me posicionar sem destruir"</div>
+          </div>
+        </div>
+        <div class="hud-missao" style="border-color: rgba(245,158,11,0.3); background: rgba(245,158,11,0.04);">
+          <div class="hud-missao-label" style="color: var(--accent-plexo);">🎯 Missão Ativa</div>
+          <div class="hud-missao-text">Se a mãe reagir mal à conversa, não recuar. Sustentar: "não estou brigando, estou dizendo o que preciso."</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud-footer">Jogo da Alma 2.0 · Soul HUD</div>
+
+  </div><!-- /hud-container -->
+
+</div><!-- /container -->
+
+</body>
+</html>
